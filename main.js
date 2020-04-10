@@ -60,16 +60,20 @@ app.on('ready', () => {
   tray = new Tray('./icons8-final-state-40.png')
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Toggle DevTools',
-      accelerator: 'Alt+Command+I',
-      click: function () {
-        dialog
+      label: '✅ 432342 - 5 minutes ago',      
+      click: function () {        
         dialog.showMessageBoxSync(BrowserWindow, {
           title: 'yo',
           message: 'dis' 
         })        
       }
-    }
+    },
+    {
+      label: 'Quit',      
+      click: function () {
+        app.quit()   
+      }
+    }    
   ])
   tray.setToolTip('✅ 432342 - 5 minutes ago')
   tray.setContextMenu(contextMenu)
