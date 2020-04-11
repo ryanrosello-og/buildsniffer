@@ -1,20 +1,25 @@
 const { app, BrowserWindow, Menu, Tray, dialog } = require('electron')
 const Poller = require('./poller')
 const path = require('path')
+const fs = require('fs')
 const request = require('request');
 var childProcess = require('child_process');
+var appConfig = {}
+let tray = null
 
 require('electron-reload')(__dirname, {
   electron: path.join(__dirname, 'node_modules/.bin/electron.cmd')
 })
 
-function createWindow() {
+getConfig()
+
+function startPolling() {
   let poller = new Poller(5000);
   let failCount = 0;
 
-  poller.onPoll(() => {
+  poller.onPoll(() => {    
     if(failCount < 10) {
-      request('http://localhost:3000/status?project=ekk&pipeline=big', function (error, response, body) {
+      request(`${appConfig.tfsBaseUrl}/status?project=${appConfig.project}&pipeline=${appConfig.pipeline}`, function (error, response, body) {
         if (!error && response.statusCode == 200) {
           build = getToolTip(body)
           let jsonResp = JSON.parse(body)
@@ -23,7 +28,7 @@ function createWindow() {
               label: '' + build.msg,
               icon: `./resources/${build.icon}`,
               click: function () {                
-                childProcess.exec(`start chrome --kiosk https://google.com/search?q=${ jsonResp.build_info.build_number }`);
+                childProcess.exec(`start chrome --kiosk ${appConfig.tfsBaseUrl}/search?q=${ jsonResp.build_info.build_number }`);
               }
             },
             {
@@ -72,22 +77,8 @@ function createWindow() {
   poller.poll();
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(startPolling)
 
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
-
-let tray = null
 app.on('ready', () => {
   tray = new Tray('./resources/icons8-final-state-40.png') 
 })
@@ -109,4 +100,14 @@ function getToolTip(data) {
   }
 
   return { tooltip: buildInfo, icon: icon, msg: msg }
+}
+
+function getConfig() {
+  let dataPath = path.join( __dirname, 'config.json');
+  let data = JSON.parse(fs.readFileSync(dataPath));
+
+  appConfig.project = data.project
+  appConfig.pat = data.pat
+  appConfig.pipeline = data.pipeline
+  appConfig.tfsBaseUrl = data.tfsBaseUrl
 }

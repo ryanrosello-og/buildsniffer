@@ -1,0 +1,6 @@
+{
+    "project": "Apple",
+    "pat": "<token here>",
+    "pipeline": "prod-p1.0",
+    "tfsBaseUrl": "http://localhost:3000"
+}
