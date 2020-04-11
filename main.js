@@ -1,9 +1,11 @@
-const { app, BrowserWindow, Menu, Tray, dialog } = require('electron')
+const { app, Menu, Tray, dialog } = require('electron')
 const Poller = require('./poller')
 const path = require('path')
 const fs = require('fs')
 const request = require('request');
 const log = require('electron-log');
+const WindowsToaster = require('node-notifier').WindowsToaster;
+
 var childProcess = require('child_process');
 var appConfig = {}
 let tray = null
@@ -11,6 +13,11 @@ let tray = null
 require('electron-reload')(__dirname, {
   electron: path.join(__dirname, 'node_modules/.bin/electron.cmd')
 })
+
+var notifier = new WindowsToaster({
+  withFallback: false, 
+  customPath: undefined 
+});
 
 getConfig()
 
@@ -53,6 +60,7 @@ function startPolling() {
           tray.setContextMenu(contextMenu)
           tray.setImage(`./resources/${build.icon}`)
           log.info('updated tray => ', build)
+          showWindowsToast('yo', build.tooltip)
         } else {
           const contextMenu = Menu.buildFromTemplate([
             {
@@ -83,10 +91,9 @@ function startPolling() {
       stillAlive = false;
     }
 
-    poller.poll(); // Go for the next poll        
+    poller.poll(); 
   });
 
-  // Initial start
   poller.poll();
 }
 
@@ -126,4 +133,14 @@ function getConfig() {
   appConfig.pollInterval = data.pollInterval
   appConfig.failureThreshold = data.failureThreshold
   log.info('Loaded config: ', appConfig)
+}
+
+function showWindowsToast(title, message) {
+  notifier.notify({ title: title,  message: message },
+    function(error, response) {      
+      if(error) {
+        log.error(error)
+      }
+    }
+  );
 }
