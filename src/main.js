@@ -9,9 +9,10 @@ const WindowsToaster = require('node-notifier').WindowsToaster;
 var childProcess = require('child_process');
 var appConfig = {}
 let tray = null
+let lastestBuild = null
 
-require('electron-reload')(__dirname, {
-  electron: path.join(__dirname, 'node_modules/.bin/electron.cmd')
+require('electron-reload')(process.cwd(), {
+  electron: path.join(process.cwd(), 'node_modules/.bin/electron.cmd')
 })
 
 var notifier = new WindowsToaster({
@@ -40,7 +41,7 @@ function startPolling() {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: '' + build.msg,
-              icon: `./resources/${build.icon}`,
+              icon: `./src/resources/${build.icon}`,
               click: function () {
                 let url = `${appConfig.tfsBaseUrl}/search?q=${jsonResp.build_info.build_number}`
                 childProcess.exec('start chrome --kiosk ' + url);
@@ -49,7 +50,7 @@ function startPolling() {
             },
             {
               label: 'Exit',
-              icon: './resources/exit.png',
+              icon: './src/resources/exit.png',
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -58,13 +59,18 @@ function startPolling() {
           ])
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
-          tray.setImage(`./resources/${build.icon}`)
+          tray.setImage(`./src/resources/${build.icon}`)
           log.info('updated tray => ', build)
-          showWindowsToast('yo', build.tooltip)
+          if(lastestBuild != null && lastestBuild != jsonResp.build_info.build_number) {
+            showWindowsToast('yo', build.tooltip)
+          } else {
+            lastestBuild = jsonResp.build_info.build_number
+          }
         } else {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: 'Show error(s)',
+              icon: './src/resources/problem.png',
               click: function () {
                 log.error('error => ', error)
                 dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
@@ -72,7 +78,7 @@ function startPolling() {
             },
             {
               label: 'Exit',
-              icon: './resources/exit.png',
+              icon: './src/resources/exit.png',
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -81,7 +87,7 @@ function startPolling() {
           ])
           tray.setToolTip('Something bad happened...')
           tray.setContextMenu(contextMenu)
-          tray.setImage(`./resources/problem.png`)
+          tray.setImage(`./src/resources/problem.png`)
           log.error('error => ', error)
           failCount++
         }
@@ -100,7 +106,8 @@ function startPolling() {
 app.whenReady().then(startPolling)
 
 app.on('ready', () => {
-  tray = new Tray('./resources/icons8-final-state-40.png')
+  console.log('cwd',process.cwd())
+  tray = new Tray('./src/resources/icons8-final-state-40.png')
 })
 
 function getToolTip(data) {
