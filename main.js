@@ -1,5 +1,11 @@
-const { app, BrowserWindow, Menu, Tray, dialog  } = require('electron')
+const { app, BrowserWindow, Menu, Tray, dialog } = require('electron')
 const Poller = require('./poller')
+const path = require('path')
+const request = require('request');
+
+require('electron-reload')(__dirname, {
+  electron: path.join(__dirname, 'node_modules/.bin/electron.cmd')
+})
 
 function createWindow() {
   // Create the browser window.
@@ -14,20 +20,42 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadFile('index.html')
   win.hide()
+ 
+  let poller = new Poller(5000);   
 
-  let poller = new Poller(2500); 
-
-  // Wait till the timeout sent our event to the EventEmitter
-  let n = 0;
   poller.onPoll(() => {
-      console.log('triggered');
-      poller.poll(); // Go for the next poll
-      n++
-      tray.setToolTip(`✅ 432342 - 5 minutes ago ${n}`)
+    request('http://localhost:3000/status?project=ekk&pipeline=big', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        build = getToolTip(body)
+        const contextMenu = Menu.buildFromTemplate([
+          {
+            label: '' + build.tooltip,
+            click: function () {
+              dialog.showMessageBoxSync(BrowserWindow, {
+                title: 'yo',
+                message: 'dis'
+              })
+            }
+          },
+          {
+            label: 'Exit',
+            click: function () {
+              app.quit()
+            }
+          }
+        ])
+        tray.setToolTip('' + build.tooltip)
+        tray.setContextMenu(contextMenu)
+        tray.setImage(`./${build.icon}`)
+        console.log('updated tray => ', build)
+      }
+    })
+    
+    poller.poll(); // Go for the next poll        
   });
-  
+
   // Initial start
-  poller.poll();  
+  poller.poll();
 }
 
 // This method will be called when Electron has finished
@@ -58,23 +86,49 @@ app.on('activate', () => {
 let tray = null
 app.on('ready', () => {
   tray = new Tray('./icons8-final-state-40.png')
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: '✅ 432342 - 5 minutes ago',      
-      click: function () {        
-        dialog.showMessageBoxSync(BrowserWindow, {
-          title: 'yo',
-          message: 'dis' 
-        })        
-      }
-    },
-    {
-      label: 'Quit',      
-      click: function () {
-        app.quit()   
-      }
-    }    
-  ])
-  tray.setToolTip('✅ 432342 - 5 minutes ago')
-  tray.setContextMenu(contextMenu)
+  var build;
+
+  request('http://localhost:3000/status?project=ekk&pipeline=big', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      build = getToolTip(body)
+      const contextMenu = Menu.buildFromTemplate([
+        {
+          label: '' + build,
+          click: function () {
+            dialog.showMessageBoxSync(BrowserWindow, {
+              title: 'yo',
+              message: 'dis'
+            })
+          }
+        },
+        {
+          label: 'Exit',
+          click: function () {
+            app.quit()
+          }
+        }
+      ])
+      tray.setToolTip('' + build)
+      tray.setContextMenu(contextMenu)
+    }
+  })
+
 })
+
+function getToolTip(data) {
+  let buildInfo, icon = ''
+  buildData = JSON.parse(data)
+
+  if (buildData.build_info.status == 'running') {
+    buildInfo = `ᕕ( ᐛ )ᕗ ${buildData.build_info.build_number} 5 minutes ago`
+    icon ='icons8-final-state-40.png'
+  } else if (buildData.build_info.status == 'failed') {
+    buildInfo = `❌ ${buildData.build_info.build_number} 5 minutes ago`
+    icon ='fail.png'
+  } else {
+    buildInfo = `✅ ${buildData.build_info.build_number} 5 minutes ago`
+    icon ='pass.png'
+  }
+
+  return { tooltip: buildInfo, icon: icon }
+}
