@@ -3,6 +3,7 @@ const Poller = require('./poller')
 const path = require('path')
 const fs = require('fs')
 const request = require('request');
+const log = require('electron-log');
 var childProcess = require('child_process');
 var appConfig = {}
 let tray = null
@@ -13,12 +14,18 @@ require('electron-reload')(__dirname, {
 
 getConfig()
 
-function startPolling() {
-  let poller = new Poller(5000);
-  let failCount = 0;
+app.setLoginItemSettings({
+  openAtLogin: true,
+  path: app.getPath("exe")
+});
 
-  poller.onPoll(() => {    
-    if(failCount < 10) {
+function startPolling() {
+  let poller = new Poller(appConfig.pollInterval);
+  let failCount = 0;
+  let stillAlive = true;
+
+  poller.onPoll(() => {
+    if (failCount < appConfig.failureThreshold) {
       request(`${appConfig.tfsBaseUrl}/status?project=${appConfig.project}&pipeline=${appConfig.pipeline}`, function (error, response, body) {
         if (!error && response.statusCode == 200) {
           build = getToolTip(body)
@@ -27,14 +34,17 @@ function startPolling() {
             {
               label: '' + build.msg,
               icon: `./resources/${build.icon}`,
-              click: function () {                
-                childProcess.exec(`start chrome --kiosk ${appConfig.tfsBaseUrl}/search?q=${ jsonResp.build_info.build_number }`);
+              click: function () {
+                let url = `${appConfig.tfsBaseUrl}/search?q=${jsonResp.build_info.build_number}`
+                childProcess.exec('start chrome --kiosk ' + url);
+                log.info('User navigated to', url)
               }
             },
             {
               label: 'Exit',
               icon: './resources/exit.png',
               click: function () {
+                log.info('Exiting ...')
                 app.quit()
               }
             }
@@ -42,13 +52,13 @@ function startPolling() {
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
           tray.setImage(`./resources/${build.icon}`)
-          console.log('updated tray => ', build)
+          log.info('updated tray => ', build)
         } else {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: 'Show error(s)',
               click: function () {
-                console.log('error => ', error)              
+                log.error('error => ', error)
                 dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
               }
             },
@@ -56,18 +66,21 @@ function startPolling() {
               label: 'Exit',
               icon: './resources/exit.png',
               click: function () {
+                log.info('Exiting ...')
                 app.quit()
               }
             }
           ])
           tray.setToolTip('Something bad happened...')
           tray.setContextMenu(contextMenu)
-          tray.setImage(`./resources/problem.png`)        
+          tray.setImage(`./resources/problem.png`)
+          log.error('error => ', error)
           failCount++
         }
       })
-    } else {
-      console.log('Too many failures, stopped trying')
+    } else if (failCount == 10 && stillAlive) {
+      log.error('Too many failures, stopped trying. ')
+      stillAlive = false;
     }
 
     poller.poll(); // Go for the next poll        
@@ -80,34 +93,37 @@ function startPolling() {
 app.whenReady().then(startPolling)
 
 app.on('ready', () => {
-  tray = new Tray('./resources/icons8-final-state-40.png') 
+  tray = new Tray('./resources/icons8-final-state-40.png')
 })
 
 function getToolTip(data) {
   let buildInfo, icon = ''
   buildData = JSON.parse(data)
-  msg = `${ buildData.build_info.build_number } 5 minutes ago`
+  msg = `${buildData.build_info.build_number} 5 minutes ago`
 
-  if (buildData.build_info.status == 'running') {    
-    buildInfo = `ᕕ(ᐛ)ᕗ ${ msg }`
-    icon ='icons8-final-state-40.png'
+  if (buildData.build_info.status == 'running') {
+    buildInfo = `ᕕ(ᐛ)ᕗ ${msg}`
+    icon = 'icons8-final-state-40.png'
   } else if (buildData.build_info.status == 'failed') {
-    buildInfo = `❌ ${ msg }`
-    icon ='fail.png'
+    buildInfo = `❌ ${msg}`
+    icon = 'fail.png'
   } else {
-    buildInfo = `✅ ${ msg }`
-    icon ='pass.png'
+    buildInfo = `✅ ${msg}`
+    icon = 'pass.png'
   }
 
   return { tooltip: buildInfo, icon: icon, msg: msg }
 }
 
 function getConfig() {
-  let dataPath = path.join( __dirname, 'config.json');
+  let dataPath = path.join(__dirname, 'config.json');
   let data = JSON.parse(fs.readFileSync(dataPath));
 
   appConfig.project = data.project
   appConfig.pat = data.pat
   appConfig.pipeline = data.pipeline
   appConfig.tfsBaseUrl = data.tfsBaseUrl
+  appConfig.pollInterval = data.pollInterval
+  appConfig.failureThreshold = data.failureThreshold
+  log.info('Loaded config: ', appConfig)
 }

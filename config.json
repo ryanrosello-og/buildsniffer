@@ -2,5 +2,7 @@
     "project": "Apple",
     "pat": "<token here>",
     "pipeline": "prod-p1.0",
-    "tfsBaseUrl": "http://localhost:3000"
+    "tfsBaseUrl": "http://localhost:3000",
+    "pollInterval": 5000,
+    "failureThreshold": 10
 }
