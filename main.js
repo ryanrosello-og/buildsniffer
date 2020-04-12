@@ -11,10 +11,6 @@ var appConfig = {}
 let tray = null
 let lastestBuild = null
 
-require('electron-reload')(process.cwd(), {
-  electron: path.join(process.cwd(), 'node_modules/.bin/electron.cmd')
-})
-
 var notifier = new WindowsToaster({
   withFallback: false, 
   customPath: undefined 
@@ -41,7 +37,7 @@ function startPolling() {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: '' + build.msg,
-              icon: `./src/resources/${build.icon}`,
+              icon: getResource(build.icon),
               click: function () {
                 let url = `${appConfig.tfsBaseUrl}/search?q=${jsonResp.build_info.build_number}`
                 childProcess.exec('start chrome --kiosk ' + url);
@@ -50,7 +46,7 @@ function startPolling() {
             },
             {
               label: 'Exit',
-              icon: './src/resources/exit.png',
+              icon: getResource('img_exit.png'),
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -59,7 +55,7 @@ function startPolling() {
           ])
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
-          tray.setImage(`./src/resources/${build.icon}`)
+          tray.setImage(getResource(build.icon))
           log.info('updated tray => ', build)
           if(lastestBuild != null && lastestBuild != jsonResp.build_info.build_number) {
             showWindowsToast('yo', build.tooltip)
@@ -70,7 +66,7 @@ function startPolling() {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: 'Show error(s)',
-              icon: './src/resources/problem.png',
+              icon: getResource('img_problem.png'),
               click: function () {
                 log.error('error => ', error)
                 dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
@@ -78,7 +74,7 @@ function startPolling() {
             },
             {
               label: 'Exit',
-              icon: './src/resources/exit.png',
+              icon: getResource('img_exit.png'),
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -87,7 +83,7 @@ function startPolling() {
           ])
           tray.setToolTip('Something bad happened...')
           tray.setContextMenu(contextMenu)
-          tray.setImage(`./src/resources/problem.png`)
+          tray.setImage(getResource('img_problem.png'))
           log.error('error => ', error)
           failCount++
         }
@@ -105,9 +101,8 @@ function startPolling() {
 
 app.whenReady().then(startPolling)
 
-app.on('ready', () => {
-  console.log('cwd',process.cwd())
-  tray = new Tray('./src/resources/icons8-final-state-40.png')
+app.on('ready', () => {  
+  tray = new Tray(getResource('img_icons8-final-state-40.png'))
 })
 
 function getToolTip(data) {
@@ -117,20 +112,20 @@ function getToolTip(data) {
 
   if (buildData.build_info.status == 'running') {
     buildInfo = `ᕕ(ᐛ)ᕗ ${msg}`
-    icon = 'icons8-final-state-40.png'
+    icon = 'img_icons8-final-state-40.png'
   } else if (buildData.build_info.status == 'failed') {
     buildInfo = `❌ ${msg}`
-    icon = 'fail.png'
+    icon = 'img_fail.png'
   } else {
     buildInfo = `✅ ${msg}`
-    icon = 'pass.png'
+    icon = 'img_pass.png'
   }
 
   return { tooltip: buildInfo, icon: icon, msg: msg }
 }
 
 function getConfig() {
-  let dataPath = path.join(__dirname, 'config.json');
+  let dataPath = getResource('config.json');
   let data = JSON.parse(fs.readFileSync(dataPath));
 
   appConfig.project = data.project
@@ -150,4 +145,8 @@ function showWindowsToast(title, message) {
       }
     }
   );
+}
+
+function getResource(resource) {
+  return path.join(__dirname, resource);
 }

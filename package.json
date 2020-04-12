@@ -2,12 +2,12 @@
   "name": "yuarpp",
   "productName": "yuarpp",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/main.js",
+  "description": "Polls tfs for recently completed releases",
+  "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make-windows": "./node_modules/.bin/electron-packager . yuarpp --overwrite  --platform=win32 --arch=x64  --prune=true --out=release-builds --version-string.CompanyName=RR --version-string.FileDescription=RR --version-string.ProductName=yuarpp",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "my_app"
+            "name": "yuarpp"
           }
         },
         {
@@ -44,6 +44,14 @@
       ]
     }
   },
+  "build": {
+    "directories": {
+      "buildResources": "resources"
+    },
+    "extraFiles": [
+      "resources"
+    ]
+  },
   "dependencies": {
     "electron-log": "^4.1.1",
     "electron-squirrel-startup": "^1.0.0",
@@ -56,7 +64,9 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.50",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.50",
     "@electron-forge/maker-zip": "^6.0.0-beta.50",
+    "copyfiles": "^2.2.0",
     "electron": "^8.2.1",
-    "electron-reload": "^1.5.0"
+    "electron-reload": "^1.5.0",
+    "mkdirp": "^1.0.4"
   }
 }
