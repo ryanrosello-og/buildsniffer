@@ -1,8 +1,22 @@
-{
-    "project": "Apple",
-    "pat": "<token here>",
-    "pipeline": "prod-p1.0",
-    "tfsBaseUrl": "http://localhost:3000",
+{    
+    "pat": "<pat here>",
+    "username": "<user name here>", 
     "pollInterval": 5000,
-    "failureThreshold": 10
+    "failureThreshold": 10,
+    "tfsOrazure" : "azure",
+    "tfs": {        
+        "instance": "",
+        "collection": "",
+        "project": "",
+        "releaseDefinitionId": "",
+        "environmentId": "",
+        "apiVersion" : "4.1-preview.2"
+    },
+    "azure": {        
+        "organization": "ryanrosello0326",
+        "project": "teTs",
+        "releaseDefinitionId": "",
+        "environmentId": "",
+        "apiVersion" : "5.1"
+    }
 }
