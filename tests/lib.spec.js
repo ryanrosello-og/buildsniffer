@@ -11,7 +11,7 @@ describe('./lib.js', () => {
   describe('getUrl(appConfig)', () => {
     it('generates valid request url for tfs', () => {        
       let appConfig = {
-        tfsOrAzure: 'tfs',
+        tfsOrazure: 'tfs',
         tfs: {
           releaseDefinitionId: 881,
           environmentId: 111,
@@ -28,7 +28,7 @@ describe('./lib.js', () => {
 
     it('generates valid request url for tfs when no environment and releaseDefnId are provided', () => {        
       let appConfig = {
-        tfsOrAzure: 'tfs',
+        tfsOrazure: 'tfs',
         tfs: {
           instance: 'goolge',
           collection: 'internal',
@@ -43,7 +43,7 @@ describe('./lib.js', () => {
 
     it('generates valid request url for azure', () => {        
       let appConfig = {
-        tfsOrAzure: 'azure',
+        tfsOrazure: 'azure',
         azure: {
           releaseDefinitionId: 881,
           environmentId: 111,
@@ -59,7 +59,7 @@ describe('./lib.js', () => {
 
     it('generates valid request url for azure when no environment and releaseDefnId are provided', () => {        
       let appConfig = {
-        tfsOrAzure: 'azure',
+        tfsOrazure: 'azure',
         azure: {
           organization: 'goolge',          
           project: 'goth',
@@ -80,7 +80,7 @@ describe('./lib.js', () => {
       let result = lib.parseResponse(testData)
       expect(result).toEqual({
         tooltip: '❌ Release-3 completed a year ago',
-        toastMessage: 'refs/heads/develop requested for: ry rose ',
+        toastMessage: 'refs/heads/develop Requested for: ry rose ',
         icon: 'img_fail.png',
         msg: 'Release-3 completed a year ago',
         releaseName: 'Release-3',
@@ -98,7 +98,7 @@ describe('./lib.js', () => {
       let result = lib.parseResponse(testData)
       expect(result).toEqual({
         tooltip: '✅ Release-3 completed a year ago',
-        toastMessage: 'refs/heads/develop requested for: ry rose ',
+        toastMessage: 'refs/heads/develop Requested for: ry rose ',
         icon: 'img_pass.png',
         msg: 'Release-3 completed a year ago',
         releaseName: 'Release-3',
@@ -108,24 +108,5 @@ describe('./lib.js', () => {
         releaseUrl: 'https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary'
       })  
     });
-
-    it('parses releases that currently in progress', () => {    
-      let testData = {}    
-      testData = require('./bakedTestData.json')
-      testData.value[0].deploymentStatus = 'inprogress'
-      testData.value[0].completedOn = '0001-01-01T00:00:00'
-      let result = lib.parseResponse(testData)
-      expect(result).toEqual({
-        tooltip: 'ᕕ(ᐛ)ᕗ Release-3 ',
-        toastMessage: 'refs/heads/develop requested for: ry rose ',
-        icon: 'img_icons8-final-state-40.png',
-        msg: 'Release-3 ',
-        releaseName: 'Release-3',
-        deploymentStatus: 'inprogress',
-        requestedFor: 'ry rose',
-        completedOn: '',
-        releaseUrl: 'https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary'
-      })  
-    });    
   });   
 });

@@ -38,6 +38,8 @@ module.exports = {
       buildData = JSON.parse(data)
     }   
     
+    if(buildData.count == 0) { return null }
+
     releaseName = buildData.value[0].release.name
     if(buildData.value[0].completedOn != '0001-01-01T00:00:00' && moment(buildData.value[0].completedOn).fromNow() != undefined) {
       completedOn = `completed ${moment(buildData.value[0].completedOn).fromNow()}`
@@ -65,7 +67,7 @@ module.exports = {
 
     return {
       tooltip: buildInfo,
-      toastMessage: `${branch} requested for: ${requestedFor} `,
+      toastMessage: `${branch} Requested for: ${requestedFor} `,
       icon: icon,
       msg: msg,
       releaseName: buildData.value[0].release.name,      

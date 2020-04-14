@@ -35,6 +35,15 @@ function startPolling() {
         if (!error && response.statusCode == 200) {
           build = utils.parseResponse(body)
           
+          if(build == null) { 
+            log.info('No deploymets found')
+            return 
+          }
+          
+          if(build.deploymentStatus != 'succeeded' && build.deploymentStatus != 'failed') {
+            return
+          }          
+
           const contextMenu = Menu.buildFromTemplate([
             {
               label: '' + build.msg,
@@ -60,10 +69,8 @@ function startPolling() {
           log.info('updated tray => ', build)
           log.info('lastestBuild => ', lastestBuild)
           log.info('build.releaseName => ', build.releaseName)
-          if(initialized 
-            && lastestBuild != build.releaseName 
-            && (build.deploymentStatus == 'failed' || build.deploymentStatus == 'succeeded')) {
-            showWindowsToast(build.tooltip, build.toastMessage)            
+          if(initialized && lastestBuild != build.releaseName) {           
+              showWindowsToast(build.tooltip, build.toastMessage)                        
           }
           lastestBuild = build.releaseName
           initialized = true
