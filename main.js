@@ -5,6 +5,7 @@ const utils = require('./lib')
 const request = require('request');
 const log = require('electron-log');
 const WindowsToaster = require('node-notifier').WindowsToaster;
+const open = require('open');
 
 var childProcess = require('child_process');
 var appConfig = {}
@@ -47,16 +48,15 @@ function startPolling() {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: '' + build.msg,
-              icon: utils.getResource(build.icon),
+              icon: utils.getResource('./images/'+build.icon),
               click: function () {
-                let url = build.releaseUrl
-                childProcess.exec('start chrome --kiosk ' + url);
+                childProcess.exec('start chrome --kiosk ' + build.releaseUrl);
                 log.info('User navigated to', url)
               }
             },
             {
               label: 'Exit',
-              icon: utils.getResource('img_exit.png'),
+              icon: utils.getResource('./images/img_exit.png'),
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -65,12 +65,12 @@ function startPolling() {
           ])
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
-          tray.setImage(utils.getResource(build.icon))
+          tray.setImage(utils.getResource('./images/'+build.icon))
           log.info('updated tray => ', build)
           log.info('lastestBuild => ', lastestBuild)
           log.info('build.releaseName => ', build.releaseName)
           if(initialized && lastestBuild != build.releaseName) {           
-              showWindowsToast(build.tooltip, build.toastMessage)                        
+              showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)                        
           }
           lastestBuild = build.releaseName
           initialized = true
@@ -78,7 +78,7 @@ function startPolling() {
           const contextMenu = Menu.buildFromTemplate([
             {
               label: 'Show error(s)',
-              icon: utils.getResource('img_problem.png'),
+              icon: utils.getResource('./images/img_problem.png'),
               click: function () {
                 log.error('error => ', error)
                 dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
@@ -86,7 +86,7 @@ function startPolling() {
             },
             {
               label: 'Exit',
-              icon: utils.getResource('img_exit.png'),
+              icon: utils.getResource('./images/img_exit.png'),
               click: function () {
                 log.info('Exiting ...')
                 app.quit()
@@ -95,7 +95,7 @@ function startPolling() {
           ])
           tray.setToolTip('Something bad happened...')
           tray.setContextMenu(contextMenu)
-          tray.setImage(utils.getResource('img_problem.png'))
+          tray.setImage(utils.getResource('./images/img_problem.png'))
           log.error('error => ', error)
           failCount++
         }
@@ -114,15 +114,41 @@ function startPolling() {
 app.whenReady().then(startPolling)
 
 app.on('ready', () => {  
-  tray = new Tray(utils.getResource('img_icons8-final-state-40.png'))
+  tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
 })
 
-function showWindowsToast(title, message) {
-  notifier.notify({ title: title,  message: message, appID: 'Build notification' },
+const commonMenuOpts = [
+  {
+    label: 'Configure',
+    icon: '',
+    click: function () {
+
+    }
+  },   
+  {
+    label: 'Show Logs',
+    icon: '',
+    click: function () {
+
+    }
+  },  
+  {
+    label: 'Exit',
+    icon: utils.getResource('./images/img_exit.png'),
+    click: function () {
+      log.info('Exiting ...')
+      app.quit()
+    }
+  }
+]
+
+function showWindowsToast(title, message, releaseUrl) {
+  notifier.notify({ title: title,  message: message, appID: 'Build notification', wait: true, },
     function(error, response) {      
       if(error) {
         log.error(error)
       }
+      open(releaseUrl);
     }
   );
 }
