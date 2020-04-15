@@ -1,21 +1,19 @@
-const { app, Menu, Tray, dialog } = require('electron')
+const { app, Menu, Tray, dialog, shell } = require('electron')
 const Poller = require('./poller')
 const utils = require('./lib')
-
 const request = require('request');
 const log = require('electron-log');
 const WindowsToaster = require('node-notifier').WindowsToaster;
 const open = require('open');
 
-var childProcess = require('child_process');
 var appConfig = {}
 let tray = null
 let lastestBuild = null
 let initialized = false
 
 var notifier = new WindowsToaster({
-  withFallback: false, 
-  customPath: undefined 
+  withFallback: false,
+  customPath: undefined
 });
 
 appConfig = utils.getConfig('./config.json')
@@ -32,67 +30,49 @@ function startPolling() {
 
   poller.onPoll(() => {
     if (failCount < appConfig.failureThreshold) {
-      request({url: utils.getUrl(appConfig), headers:{ 'Authorization': utils.generateAuthToken(appConfig.username, appConfig.pat) }}, function (error, response, body) {
+      request({ url: utils.getUrl(appConfig), headers: { 'Authorization': utils.generateAuthToken(appConfig.username, appConfig.pat) } }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
           build = utils.parseResponse(body)
-          
-          if(build == null) { 
+
+          if (build == null) {
             log.info('No deploymets found')
-            return 
-          }
-          
-          if(build.deploymentStatus != 'succeeded' && build.deploymentStatus != 'failed') {
             return
-          }          
+          }
+
+          if (build.deploymentStatus != 'succeeded' && build.deploymentStatus != 'failed') {
+            return
+          }
 
           const contextMenu = Menu.buildFromTemplate([
-            {
-              label: '' + build.msg,
-              icon: utils.getResource('./images/'+build.icon),
-              click: function () {
-                childProcess.exec('start chrome --kiosk ' + build.releaseUrl);
-                log.info('User navigated to', url)
-              }
-            },
-            {
-              label: 'Exit',
-              icon: utils.getResource('./images/img_exit.png'),
-              click: function () {
-                log.info('Exiting ...')
-                app.quit()
-              }
+          {
+            label: '' + build.msg,
+            icon: utils.getResource('./images/' + build.icon),
+            click: function () {
+              open(build.releaseUrl);
+              log.info('User navigated to', build.releaseUrl)
             }
-          ])
+          }].concat(commonMenuOpts))
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
-          tray.setImage(utils.getResource('./images/'+build.icon))
+          tray.setImage(utils.getResource('./images/' + build.icon))
           log.info('updated tray => ', build)
           log.info('lastestBuild => ', lastestBuild)
           log.info('build.releaseName => ', build.releaseName)
-          if(initialized && lastestBuild != build.releaseName) {           
-              showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)                        
+          if (initialized && lastestBuild != build.releaseName) {
+            showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)
           }
           lastestBuild = build.releaseName
           initialized = true
         } else {
           const contextMenu = Menu.buildFromTemplate([
-            {
-              label: 'Show error(s)',
-              icon: utils.getResource('./images/img_problem.png'),
-              click: function () {
-                log.error('error => ', error)
-                dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
-              }
-            },
-            {
-              label: 'Exit',
-              icon: utils.getResource('./images/img_exit.png'),
-              click: function () {
-                log.info('Exiting ...')
-                app.quit()
-              }
+          {
+            label: 'Show error(s)',
+            icon: utils.getResource('./images/img_problem.png'),
+            click: function () {
+              log.error('error => ', error)
+              dialog.showErrorBox('Failed to retrieve build information', `${error.message} \n ${error.stack}`)
             }
-          ])
+          }].concat(commonMenuOpts))
           tray.setToolTip('Something bad happened...')
           tray.setContextMenu(contextMenu)
           tray.setImage(utils.getResource('./images/img_problem.png'))
@@ -105,7 +85,7 @@ function startPolling() {
       stillAlive = false;
     }
 
-    poller.poll(); 
+    poller.poll();
   });
 
   poller.poll();
@@ -113,25 +93,29 @@ function startPolling() {
 
 app.whenReady().then(startPolling)
 
-app.on('ready', () => {  
+app.on('ready', () => {
   tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
 })
 
-const commonMenuOpts = [
+let commonMenuOpts = [
+  { type: 'separator' },
   {
     label: 'Configure',
-    icon: '',
+    icon: utils.getResource('./images/img_config.png'),
     click: function () {
-
+      var config = utils.getResource('./config.json')
+      log.info('Opening config =>', config)
+      shell.openExternal(utils.getResource(config))
     }
-  },   
+  },
   {
     label: 'Show Logs',
-    icon: '',
+    icon: utils.getResource('./images/img_logs.png'),
     click: function () {
-
+      let homeDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+      shell.openExternal(`${homeDir}/AppData/Roaming/yuarpp/logs/main.log`)
     }
-  },  
+  },
   {
     label: 'Exit',
     icon: utils.getResource('./images/img_exit.png'),
@@ -143,9 +127,9 @@ const commonMenuOpts = [
 ]
 
 function showWindowsToast(title, message, releaseUrl) {
-  notifier.notify({ title: title,  message: message, appID: 'Build notification', wait: true, },
-    function(error, response) {      
-      if(error) {
+  notifier.notify({ title: title, message: message, appID: 'Build notification', wait: true, },
+    function (error, response) {
+      if (error) {
         log.error(error)
       }
       open(releaseUrl);
