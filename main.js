@@ -105,7 +105,7 @@ let commonMenuOpts = [
     click: function () {
       var config = utils.getResource('./config.json')
       log.info('Opening config =>', config)
-      shell.openExternal(utils.getResource(config))
+      shell.openItem(config)
     }
   },
   {
@@ -113,7 +113,7 @@ let commonMenuOpts = [
     icon: utils.getResource('./images/img_logs.png'),
     click: function () {
       let homeDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-      shell.openExternal(`${homeDir}/AppData/Roaming/yuarpp/logs/main.log`)
+      shell.openItem(`${homeDir}/AppData/Roaming/yuarpp/logs/main.log`)
     }
   },
   {
@@ -127,7 +127,7 @@ let commonMenuOpts = [
 ]
 
 function showWindowsToast(title, message, releaseUrl) {
-  notifier.notify({ title: title, message: message, appID: 'Build notification', wait: true, },
+  notifier.notify({ title: title, message: message, appID: 'Build notification' },
     function (error, response) {
       if (error) {
         log.error(error)
