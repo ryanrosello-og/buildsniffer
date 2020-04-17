@@ -6,6 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "windows-installer":"node ./generate-installer.js",
     "make-windows": "./node_modules/.bin/electron-packager . yuarpp --overwrite  --platform=win32 --arch=x64  --prune=true --out=release-builds --version-string.CompanyName=RR --version-string.FileDescription=RR --version-string.ProductName=yuarpp",
     "lint": "echo \"No linting configured\"",
     "test": "jasmine tests/*spec.js"
@@ -36,6 +37,7 @@
   "devDependencies": {
     "copyfiles": "^2.2.0",
     "electron": "^8.2.1",
+    "electron-winstaller": "^4.0.0",
     "jasmine": "^3.5.0"
   }
 }
