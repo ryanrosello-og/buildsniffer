@@ -4,7 +4,6 @@ const utils = require('./lib')
 const request = require('request');
 const log = require('electron-log');
 const WindowsToaster = require('node-notifier').WindowsToaster;
-const open = require('open');
 
 var appConfig = {}
 let tray = null
@@ -48,7 +47,7 @@ function startPolling() {
             label: '' + build.msg,
             icon: utils.getResource('./images/' + build.icon),
             click: function () {
-              open(build.releaseUrl);
+              shell.openExternal(build.releaseUrl)
               log.info('User navigated to', build.releaseUrl)
             }
           }].concat(commonMenuOpts))
@@ -87,7 +86,6 @@ function startPolling() {
 
     poller.poll();
   });
-
   poller.poll();
 }
 
@@ -127,12 +125,15 @@ let commonMenuOpts = [
 ]
 
 function showWindowsToast(title, message, releaseUrl) {
-  notifier.notify({ title: title, message: message, appID: 'Build notification' },
+  notifier.notify({ title: title, message: message, appID: 'Build notification', wait: true },
     function (error, response) {
       if (error) {
         log.error(error)
-      }
-      open(releaseUrl);
+      }      
     }
   );
+
+  notifier.on('click', function(notifierObject, options, event) {
+    shell.openExternal(build.releaseUrl)
+  });
 }
