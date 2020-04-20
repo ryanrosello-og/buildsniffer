@@ -1,4 +1,4 @@
-const { app, Menu, Tray, dialog, shell } = require('electron')
+const { app, Menu, Tray, dialog, shell, BrowserWindow } = require('electron')
 const Poller = require('./poller')
 const utils = require('./lib')
 const request = require('request');
@@ -8,6 +8,7 @@ const WindowsToaster = require('node-notifier').WindowsToaster;
 var appConfig = {}
 let tray = null
 let lastestBuild = null
+var mainWindow = null
 let initialized = false
 
 var notifier = new WindowsToaster({
@@ -26,6 +27,13 @@ function startPolling() {
   let poller = new Poller(appConfig.pollInterval);
   let failCount = 0;
   let stillAlive = true;
+
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600
+  }) 
+  mainWindow.loadFile('index.html')
+  mainWindow.hide();
 
   poller.onPoll(() => {
     if (failCount < appConfig.failureThreshold) {
@@ -101,9 +109,10 @@ let commonMenuOpts = [
     label: 'Configure',
     icon: utils.getResource('./images/img_config.png'),
     click: function () {
-      var config = utils.getResource('./config.json')
-      log.info('Opening config =>', config)
-      shell.openItem(config)
+      //var config = utils.getResource('./config.json')
+      //log.info('Opening config =>', config)
+      //shell.openItem(config)
+      mainWindow.show();
     }
   },
   {
