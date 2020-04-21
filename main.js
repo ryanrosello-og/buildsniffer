@@ -27,6 +27,7 @@ function startPolling() {
   let poller = new Poller(appConfig.pollInterval);
   let failCount = 0;
   let stillAlive = true;
+  tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
 
   mainWindow = new BrowserWindow({
     width: 800,
@@ -97,11 +98,13 @@ function startPolling() {
   poller.poll();
 }
 
-app.whenReady().then(startPolling)
+const gotTheLock = app.requestSingleInstanceLock()
 
-app.on('ready', () => {
-  tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
-})
+if (!gotTheLock) {  // prevent multiple instances firing up
+  app.quit()
+} else {
+  app.whenReady().then(startPolling)
+}
 
 let commonMenuOpts = [
   { type: 'separator' },
@@ -109,9 +112,6 @@ let commonMenuOpts = [
     label: 'Configure',
     icon: utils.getResource('./images/img_config.png'),
     click: function () {
-      //var config = utils.getResource('./config.json')
-      //log.info('Opening config =>', config)
-      //shell.openItem(config)
       mainWindow.show();
     }
   },
