@@ -30,6 +30,9 @@ function startPolling() {
   tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
 
   mainWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true
+    },    
     width: 800,
     height: 600,
     frame: false
@@ -37,7 +40,7 @@ function startPolling() {
   mainWindow.loadFile('index.html')
   mainWindow.hide();
 
-  poller.onPoll(() => {
+  poller.onPoll(() => {    
     if (failCount < appConfig.failureThreshold) {
       request({ url: utils.getUrl(appConfig), headers: { 'Authorization': utils.generateAuthToken(appConfig.username, appConfig.pat) } }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -113,7 +116,9 @@ let commonMenuOpts = [
     label: 'Configure',
     icon: utils.getResource('./images/img_config.png'),
     click: function () {
+      mainWindow.webContents.openDevTools()
       mainWindow.show();
+      mainWindow.webContents.send('some_js_Method', 'window created!');
     }
   },
   {

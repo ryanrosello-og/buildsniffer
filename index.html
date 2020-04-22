@@ -6,81 +6,133 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Hello World!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    
+
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
   </head>
   <body>
-    <div class="tile is-vertical is-3">
-      <div class="tile">
-        <div class="tile is-parent is-vertical">
-          <div class="field">
-            <label class="label">Username</label>
-            <div class="control has-icons-left has-icons-right">
-              <input class="input" type="text" placeholder="Azure Devops or TFS username" />
+    <section class="hero is-primary is-medium">
+      <!-- Hero head: will stick at the top -->
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div class="navbar-brand">
+              <a class="navbar-item">
+                <span>Configure</span>
+              </a>
+              <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
             </div>
-            <p class="help is-success">Azure Devops or TFS username</p>
-          </div>
-          <div class="field">
-            <label class="label">PAT</label>
-            <div class="control has-icons-left has-icons-right">
-              <input class="input" type="text" placeholder="Personal Access Token" />
-            </div>
-            <p class="help is-success">Where do I find this?</p>
-          </div>
-          <div class="control">
-            <button class="button is-link is-right">Verify Credentials</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="tile is-vertical is-3">
-      <h1 class="title">TFS Settings</h1>
-      <div class="tile">
-        <div class="tile is-parent is-vertical">
-          <div class="field">
-            <label class="label">Instance</label>
-            <div class="control">
-              <input class="input" type="text" />
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Collection</label>
-            <div class="control">
-              <input class="input" type="text" />
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Project</label>
-            <div class="control">
-              <input class="input" type="text" />
-            </div>
-            <p class="help is-success">Where do I find this?</p>
-          </div>
-          <div class="dropdown">
-            <div class="dropdown-trigger">
-              <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                <span>Release</span>
-                <span class="icon is-small">
-                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+            <div id="navbarMenuHeroA" class="navbar-menu">
+              <div class="navbar-end">
+                <span class="navbar-item">
+                  <a class="button is-primary is-inverted">
+                    <span class="icon">
+                      <i class="fab fa-times-circle"></i>
+                    </span>                    
+                  </a>
                 </span>
-              </button>
-            </div>
-            <div class="dropdown-menu" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <a href="#" class="dropdown-item">Dropdown item</a>
-                <a class="dropdown-item">Other dropdown item</a>
-                <a href="#" class="dropdown-item is-active">Active dropdown item</a>
-                <a href="#" class="dropdown-item">Other dropdown item</a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item">With a divider</a>
               </div>
             </div>
           </div>
-          <div class="control">
-            <button class="button is-link is-right">Save</button>
+        </nav>
+      </div>
+    
+      <!-- Hero content: will be in the middle -->
+      <div class="hero-body">
+        <div class="tile is-vertical is-3">
+          <div class="tile">
+            <div class="tile is-parent is-vertical">
+              <div class="field">
+                <label class="label">Username</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" type="text" placeholder="Azure Devops or TFS username" />
+                </div>
+                <p class="help is-success">Azure Devops or TFS username</p>
+              </div>
+              <div class="field">
+                <label class="label">PAT</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input" type="text" placeholder="Personal Access Token" />
+                </div>
+                <p class="help is-success">Where do I find this?</p>
+              </div>
+              <div class="control">
+                <button id="verify" class="button is-link is-right">Verify Credentials</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>    
+        <div class="tile is-vertical is-3">
+          <h1 class="title">TFS Settings</h1>
+          <div class="tile">
+            <div class="tile is-parent is-vertical">
+              <div class="field">
+                <label class="label">Instance</label>
+                <div class="control">
+                  <input class="input" type="text" />
+                </div>
+              </div>
+              <div class="field is-hidden-desktop">
+                <label class="label">Collection</label>
+                <div class="control">
+                  <input class="input" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Project</label>
+                <div class="control">
+                  <input class="input" type="text" />
+                </div>
+                <p class="help is-success">Where do I find this?</p>
+              </div>
+              <div class="dropdown">
+                <div class="dropdown-trigger">
+                  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>Release</span>
+                    <span class="icon is-small">
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">Dropdown item</a>
+                    <a class="dropdown-item">Other dropdown item</a>
+                    <a href="#" class="dropdown-item is-active">Active dropdown item</a>
+                    <a href="#" class="dropdown-item">Other dropdown item</a>
+                    <hr class="dropdown-divider" />
+                    <a href="#" class="dropdown-item">With a divider</a>
+                  </div>
+                </div>
+              </div>
+              <div class="control">
+                <button class="button is-link is-right">Save</button>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>    
+
+    </section>
+
+    <script type='text/javascript'>
+      require('electron').ipcRenderer.on('some_js_Method', (event, message) => {
+        console.log(message)  // Prints 'window created!'
+      })
+
+      document.getElementById('verify').onclick = function(){
+        console.log('yooooooooooooooooooooooooo')
+      }
+    </script>
+  
+  
+  
+  
   </body>
 </html>
