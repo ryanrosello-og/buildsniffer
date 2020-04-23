@@ -7,9 +7,6 @@
     <title>Hello World!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
     <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    
-
-    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
   </head>
   <body>
@@ -51,17 +48,29 @@
               <div class="field">
                 <label class="label">Username</label>
                 <div class="control has-icons-left has-icons-right">
-                  <input class="input" type="text" placeholder="Azure Devops or TFS username" />
+                  <input class="input" id="username" type="text" placeholder="Azure Devops or TFS username" />
                 </div>
                 <p class="help is-success">Azure Devops or TFS username</p>
               </div>
               <div class="field">
                 <label class="label">PAT</label>
                 <div class="control has-icons-left has-icons-right">
-                  <input class="input" type="text" placeholder="Personal Access Token" />
+                  <input class="input" id="pat" type="text" placeholder="Personal Access Token" />
                 </div>
                 <p class="help is-success">Where do I find this?</p>
               </div>
+              <div class="field">
+                <label class="label">Poll Interval</label>
+                <div class="control">
+                  <input class="input" id="pollInterval" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Failure Threshold</label>
+                <div class="control">
+                  <input class="input" id="failureThreshold" type="text" />
+                </div>
+              </div>            
               <div class="control">
                 <button id="verify" class="button is-link is-right">Verify Credentials</button>
               </div>
@@ -75,19 +84,19 @@
               <div class="field">
                 <label class="label">Instance</label>
                 <div class="control">
-                  <input class="input" type="text" />
+                  <input class="input" id="tfs.instance" type="text" />
                 </div>
               </div>
-              <div class="field is-hidden-desktop">
+              <div class="field">
                 <label class="label">Collection</label>
                 <div class="control">
-                  <input class="input" type="text" />
+                  <input class="input" id="tfs.collection" type="text" />
                 </div>
               </div>
               <div class="field">
                 <label class="label">Project</label>
                 <div class="control">
-                  <input class="input" type="text" />
+                  <input class="input" id="tfs.project" type="text" />
                 </div>
                 <p class="help is-success">Where do I find this?</p>
               </div>
@@ -112,7 +121,7 @@
                 </div>
               </div>
               <div class="control">
-                <button class="button is-link is-right">Save</button>
+                <button id="save" class="button is-link is-right">Save</button>
               </div>
             </div>
           </div>
@@ -122,6 +131,27 @@
     </section>
 
     <script type='text/javascript'>
+      const lib = require('./lib')
+      const log = require('electron-log');
+      document.addEventListener('DOMContentLoaded',pageLoaded);
+
+      function pageLoaded(){
+          console.log('The page is loaded')       
+          const appConfig = lib.getConfig('./config.json')
+          document.getElementById('username').value = appConfig.username
+          document.getElementById('pat').value = appConfig.pat
+          document.getElementById('pollInterval').value = appConfig.pollInterval
+          document.getElementById('failureThreshold').value = appConfig.failureThreshold          
+
+          if(appConfig.tfsOrazure == "tfs") {
+            document.getElementById('tfs.instance').value = appConfig.tfs.instance 
+          } else if(appConfig.tfsOrazure == "azure") {
+
+          } else {
+            log.error('Failed to load config - tfs or devOps azure not defined')
+          }
+      }
+
       require('electron').ipcRenderer.on('some_js_Method', (event, message) => {
         console.log(message)  // Prints 'window created!'
       })
@@ -129,10 +159,21 @@
       document.getElementById('verify').onclick = function(){
         console.log('yooooooooooooooooooooooooo')
       }
-    </script>
-  
-  
-  
-  
+
+      document.getElementById('save').onclick = function(){
+        console.log('Save clicked')
+        const appConfig = {
+          username: document.getElementById('username').value,
+          
+        }
+        var validationResult = lib.validateConfig(appConfig)
+
+        if(!validationResult.hasErrors) {
+          lib.setConfig(appConfig)
+        } else {
+          console.log('TODO - show bulma error here', validationResult.errors)
+        }        
+      }   
+    </script>  
   </body>
 </html>
