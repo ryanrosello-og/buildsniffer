@@ -34,6 +34,13 @@
                     </span>                    
                   </a>
                 </span>
+                <span class="navbar-item">
+                  <a class="button is-primary is-inverted">
+                    <div class="control">
+                      <button id="close" class="button is-link is-right">Close</button>
+                    </div>                  
+                  </a>
+                </span>                
               </div>
             </div>
           </div>
@@ -77,6 +84,8 @@
             </div>
           </div>
         </div>
+
+        <!-- TFS Settings -->
         <div class="tile is-vertical is-3">
           <h1 class="title">TFS Settings</h1>
           <div class="tile">
@@ -100,32 +109,72 @@
                 </div>
                 <p class="help is-success">Where do I find this?</p>
               </div>
-              <div class="dropdown">
-                <div class="dropdown-trigger">
-                  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                    <span>Release</span>
-                    <span class="icon is-small">
-                      <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                  </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                  <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">Dropdown item</a>
-                    <a class="dropdown-item">Other dropdown item</a>
-                    <a href="#" class="dropdown-item is-active">Active dropdown item</a>
-                    <a href="#" class="dropdown-item">Other dropdown item</a>
-                    <hr class="dropdown-divider" />
-                    <a href="#" class="dropdown-item">With a divider</a>
-                  </div>
+              <div class="field">
+                <label class="label">Release Definition Id</label>
+                <div class="control">
+                  <input class="input" id="tfs.releaseDefinitionId" type="text" />
                 </div>
               </div>
-              <div class="control">
-                <button id="save" class="button is-link is-right">Save</button>
+              <div class="field">
+                <label class="label">Environment Id</label>
+                <div class="control">
+                  <input class="input" id="tfs.environmentId" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Api Version</label>
+                <div class="control">
+                  <input class="input" id="tfs.apiVersion" type="text" placeholder="4.1-preview.2" />
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div> 
+
+        <!-- AzureDevOps Settings -->
+        <div class="tile is-vertical is-3">
+          <h1 class="title">AzureDevOps Settings</h1>
+          <div class="tile">
+            <div class="tile is-parent is-vertical">
+              <div class="field">
+                <label class="label">Organization</label>
+                <div class="control">
+                  <input class="input" id="azure.organization" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Project</label>
+                <div class="control">
+                  <input class="input" id="azure.project" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Release Definition Id</label>
+                <div class="control">
+                  <input class="input" id="azure.releaseDefinitionId" type="text" />
+                </div>                
+              </div>
+              <div class="field">
+                <label class="label">Environment Id</label>
+                <div class="control">
+                  <input class="input" id="azure.environmentId" type="text" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Api Version</label>
+                <div class="control">
+                  <input class="input" id="azure.apiVersion" type="text" placeholder="5.1"/>
+                </div>
               </div>
             </div>
           </div>
         </div> 
+
+        <footer class="footer">
+          <div class="control">
+            <button id="save" class="button is-link is-right">Save</button>
+          </div>
+        </footer>        
       </div>    
 
     </section>
@@ -145,8 +194,17 @@
 
           if(appConfig.tfsOrazure == "tfs") {
             document.getElementById('tfs.instance').value = appConfig.tfs.instance 
+            document.getElementById('tfs.collection').value = appConfig.tfs.collection
+            document.getElementById('tfs.project').value = appConfig.tfs.project
+            document.getElementById('tfs.releaseDefinitionId').value = appConfig.tfs.releaseDefinitionId
+            document.getElementById('tfs.environmentId').value = appConfig.tfs.environmentId
+            document.getElementById('tfs.apiVersion').value = appConfig.tfs.apiVersion
           } else if(appConfig.tfsOrazure == "azure") {
-
+            document.getElementById('azure.organization').value = appConfig.azure.organization
+            document.getElementById('azure.project').value = appConfig.azure.project
+            document.getElementById('azure.releaseDefinitionId').value = appConfig.azure.releaseDefinitionId
+            document.getElementById('azure.environmentId').value = appConfig.azure.environmentId
+            document.getElementById('azure.apiVersion').value = appConfig.azure.apiVersion
           } else {
             log.error('Failed to load config - tfs or devOps azure not defined')
           }
@@ -160,16 +218,40 @@
         console.log('yooooooooooooooooooooooooo')
       }
 
+      document.getElementById('close').onclick = function(){
+        console.log('TODO mainWindow.hide()')
+      }
+
       document.getElementById('save').onclick = function(){
         console.log('Save clicked')
         const appConfig = {
           username: document.getElementById('username').value,
-          
+          pat: document.getElementById('pat').value,
+          pollInterval: document.getElementById('pollInterval').value,
+          failureThreshold: document.getElementById('failureThreshold').value,
+          tfsOrazure: 'dunno',
+          tfs: {
+            'instance': document.getElementById('tfs.instance').value,
+            'collection': document.getElementById('tfs.collection').value,
+            'project': document.getElementById('tfs.project').value,
+            'releaseDefinitionId': document.getElementById('tfs.releaseDefinitionId').value,
+            'environmentId': document.getElementById('tfs.environmentId').value,
+            'apiVersion' : document.getElementById('tfs.apiVersion').value
+          },
+          azure: {
+            'organization': document.getElementById('azure.organization').value,
+            'project': document.getElementById('azure.project').value,
+            'releaseDefinitionId': document.getElementById('azure.releaseDefinitionId').value,
+            'environmentId': document.getElementById('azure.environmentId').value,
+            'apiVersion' : document.getElementById('azure.apiVersion').value
+          }
         }
+
         var validationResult = lib.validateConfig(appConfig)
 
         if(!validationResult.hasErrors) {
-          lib.setConfig(appConfig)
+          lib.setConfig(appConfig, './config.json')
+          console.log('Config updated')
         } else {
           console.log('TODO - show bulma error here', validationResult.errors)
         }        

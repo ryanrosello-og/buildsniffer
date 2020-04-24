@@ -16,8 +16,9 @@ module.exports = {
       errors: errorMessages
     }
   },
-  setConfig(config) {
-    // TODO: save back to file
+  setConfig(config, configPath) {
+    let data = JSON.stringify(config);
+    fs.writeFileSync(configPath, data);
   },
   getResource(resource) {
     try {
