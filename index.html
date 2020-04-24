@@ -174,15 +174,25 @@
           <div class="control">
             <button id="save" class="button is-link is-right">Save</button>
           </div>
+          <article id="errorModal" class="message is-danger is-hidden-tablet is-hidden-desktop">
+            <div class="message-header">
+              <p>Danger</p>
+              <button id="closeModal" onclick="closeModal()"  class="delete" aria-label="delete"></button>
+            </div>
+            <div id="errors" class="message-body"></div>
+          </article>           
         </footer>        
       </div>    
-
-    </section>
+    </section>   
 
     <script type='text/javascript'>
       const lib = require('./lib')
       const log = require('electron-log');
       document.addEventListener('DOMContentLoaded',pageLoaded);
+
+      function closeModal() {
+        document.getElementById('errorModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop'
+      }
 
       function pageLoaded(){
           console.log('The page is loaded')       
@@ -254,6 +264,8 @@
           lib.setConfig(appConfig, './config.json')
           console.log('Config updated')
         } else {
+          document.getElementById('errors').innerText = validationResult.errors[0]
+          document.getElementById('errorModal').className = 'message is-danger'
           console.log('TODO - show bulma error here', validationResult.errors)
         }        
       }   
