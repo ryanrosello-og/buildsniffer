@@ -218,8 +218,9 @@
         console.log('yooooooooooooooooooooooooo')
       }
 
-      document.getElementById('close').onclick = function(){
-        console.log('TODO mainWindow.hide()')
+      document.getElementById('close').onclick = function() {
+        const electron = require('electron')
+        electron.remote.getCurrentWindow().hide()
       }
 
       document.getElementById('save').onclick = function(){
