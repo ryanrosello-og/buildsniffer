@@ -130,6 +130,15 @@ let commonMenuOpts = [
     }
   },
   {
+    label: 'Restart App',
+    icon: utils.getResource('./images/img_restart.png'),
+    click: function () {
+      log.info('Restarting ...')
+      app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+      app.exit(0)
+    }
+  },  
+  {
     label: 'Exit',
     icon: utils.getResource('./images/img_exit.png'),
     click: function () {
