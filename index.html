@@ -49,7 +49,7 @@
     
       <!-- Hero content: will be in the middle -->
       <div class="hero-body">
-        <div class="tile is-vertical is-3">
+        <div class="tile is-vertical is-4">
           <div class="tile">
             <div class="tile is-parent is-vertical">
               <div class="field">
@@ -93,7 +93,7 @@
         </div>
 
         <!-- TFS Settings -->
-        <div id="settings.tfs" class="tile is-vertical is-3">
+        <div id="settings.tfs" class="tile is-vertical is-4">
           <h1 class="title">TFS Settings</h1>
           <div class="tile">
             <div class="tile is-parent is-vertical">
@@ -139,7 +139,7 @@
         </div> 
 
         <!-- AzureDevOps Settings -->
-        <div id="settings.azure" class="tile is-vertical is-3">
+        <div id="settings.azure" class="tile is-vertical is-4">
           <h1 class="title">AzureDevOps Settings</h1>
           <div class="tile">
             <div class="tile is-parent is-vertical">
@@ -291,11 +291,11 @@
 
         if(!validationResult.hasErrors) {
           lib.setConfig(appConfig, './config.json')
-          document.getElementById('msg').innerText = 'Configuration Saved'
+          document.getElementById('msg').innerText = 'Configuration Saved - dont forget to restart the app'
           document.getElementById('genericModal').className = 'message is-success'
           console.log('Config updated')
         } else {
-          document.getElementById('msg').innerText = validationResult.errors[0]
+          document.getElementById('msg').innerText = validationResult.errors.join('\n');
           document.getElementById('genericModal').className = 'message is-danger'
           console.log('TODO - show bulma error here', validationResult.errors)
         }        

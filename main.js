@@ -67,9 +67,7 @@ function startPolling() {
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
           tray.setImage(utils.getResource('./images/' + build.icon))
-          log.info('updated tray => ', build)
-          log.info('lastestBuild => ', lastestBuild)
-          log.info('build.releaseName => ', build.releaseName)
+          log.info(`updated tray [${build}] | lastestBuild[${lastestBuild}] | build.releaseName[${build.releaseName}]`)
           if (initialized && lastestBuild != build.releaseName) {
             showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)
           }
