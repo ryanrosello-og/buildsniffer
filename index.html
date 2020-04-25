@@ -181,12 +181,11 @@
           <div class="control">
             <button id="save" class="button is-link is-right">Save</button>
           </div>
-          <article id="errorModal" class="message is-danger is-hidden-tablet is-hidden-desktop">
-            <div class="message-header">
-              <p>Danger</p>
+          <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop">
+            <div class="message-header">              
               <button id="closeModal" onclick="closeModal()"  class="delete" aria-label="delete"></button>
             </div>
-            <div id="errors" class="message-body"></div>
+            <div id="msg" class="message-body"></div>
           </article>           
         </footer>        
       </div>    
@@ -198,7 +197,7 @@
       document.addEventListener('DOMContentLoaded',pageLoaded);
 
       function closeModal() {
-        document.getElementById('errorModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop'
+        document.getElementById('genericModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop'
       }
 
       function toggleTab(option) {
@@ -292,10 +291,12 @@
 
         if(!validationResult.hasErrors) {
           lib.setConfig(appConfig, './config.json')
+          document.getElementById('msg').innerText = 'Configuration Saved'
+          document.getElementById('genericModal').className = 'message is-success'
           console.log('Config updated')
         } else {
-          document.getElementById('errors').innerText = validationResult.errors[0]
-          document.getElementById('errorModal').className = 'message is-danger'
+          document.getElementById('msg').innerText = validationResult.errors[0]
+          document.getElementById('genericModal').className = 'message is-danger'
           console.log('TODO - show bulma error here', validationResult.errors)
         }        
       }   
