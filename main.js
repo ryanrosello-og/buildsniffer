@@ -149,6 +149,6 @@ function showWindowsToast(title, message, releaseUrl) {
   );
 
   notifier.on('click', function(notifierObject, options, event) {
-    shell.openExternal(build.releaseUrl)
+    shell.openExternal(releaseUrl)
   });
 }

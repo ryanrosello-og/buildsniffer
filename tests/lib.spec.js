@@ -8,6 +8,52 @@ describe('./lib.js', () => {
     });
   });
 
+  describe('validateConfig(config)', () => {
+    it('returns no errors when the tfs configuration valid', () => {        
+      let appConfig = {
+        pat: 'fdsdfsdytvvjgq5xxx5pn66pmut2hd6bsh3sz464dloffffh4jw2nq',
+        username: 'autotest',
+        pollInterval: 21000,
+        failureThreshold: 10,
+        tfsOrazure: 'tfs',
+        tfs: {
+          releaseDefinitionId: 881,
+          environmentId: 111,
+          instance: 'goolge',
+          collection: 'internal',
+          project: 'goth',
+          apiVersion: '1.1'
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result).toEqual('')
+    });
+
+    it('returns no errors when the azure configuration valid', () => {        
+      let appConfig = {
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result).toEqual('')
+    });    
+
+    it('returns errors when mandatory keys are missing', () => {        
+      let appConfig = {
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result).toEqual('')
+    });    
+
+
+    it('returns errors when invalid tfs configuration is supplied', () => {        
+    });
+    
+    it('returns errors when invalid azure configuration is supplied', () => {        
+    });    
+  });  
+
   describe('getUrl(appConfig)', () => {
     it('generates valid request url for tfs', () => {        
       let appConfig = {

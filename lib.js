@@ -4,9 +4,6 @@ const moment = require('moment')
 const log = require('electron-log')
 
 module.exports = {
-  yo() {
-    console.log('TODO validate config')
-  },
   validateConfig(config) {
     var hasErrors = false;
     var errorMessages = []
