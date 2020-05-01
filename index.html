@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
     <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <style> ::-webkit-scrollbar { display: none; } </style>
   </head>
   <body>
     <section class="hero is-primary is-medium">
@@ -19,177 +20,167 @@
               <a class="navbar-item">
                 <span>Configure</span>
               </a>
-              <span class="navbar-burger burger" data-target="navbarMenuHeroA">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
             </div>
             <div id="navbarMenuHeroA" class="navbar-menu">
               <div class="navbar-end">
                 <span class="navbar-item">
                   <a class="button is-primary is-inverted">
-                    <span class="icon">
-                      <i class="fab fa-times-circle"></i>
-                    </span>                    
-                  </a>
-                </span>
-                <span class="navbar-item">
-                  <a class="button is-primary is-inverted">
                     <div class="control">
                       <button id="close" class="button is-link is-right">Close</button>
-                    </div>                  
+                    </div>
                   </a>
-                </span>                
+                </span>
               </div>
             </div>
           </div>
         </nav>
       </div>
-    
-      <!-- Hero content: will be in the middle -->
-      <div class="hero-body">
-        <div class="tile is-vertical is-4">
-          <div class="tile">
-            <div class="tile is-parent is-vertical">
-              <div class="field">
-                <label class="label">Username</label>
-                <div class="control has-icons-left has-icons-right">
-                  <input class="input" id="username" type="text" placeholder="Azure Devops or TFS username" />
+    </section>
+
+      <div class="tile is-ancestor">
+        <div class="hero-body">
+          <div class="tile is-vertical is-6">
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Username</label>
+                  <div class="control">
+                    <input class="input" id="username" type="text" placeholder="Azure Devops or TFS username" />
+                  </div>
+                  <p class="help is-success">Azure Devops or TFS username</p>
                 </div>
-                <p class="help is-success">Azure Devops or TFS username</p>
-              </div>
-              <div class="field">
-                <label class="label">PAT</label>
-                <div class="control has-icons-left has-icons-right">
-                  <input class="input" id="pat" type="text" placeholder="Personal Access Token" />
+                <div class="field">
+                  <label class="label">PAT</label>
+                  <div class="control">
+                    <input class="input" id="pat" type="text" placeholder="Personal Access Token" />
+                  </div>
+                  <p class="help is-success">Where do I find this?</p>
                 </div>
-                <p class="help is-success">Where do I find this?</p>
-              </div>
-              <div class="field">
-                <label class="label">Poll Interval</label>
+                <div class="field">
+                  <label class="label">Poll Interval</label>
+                  <div class="control">
+                    <input class="input" id="pollInterval" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Failure Threshold</label>
+                  <div class="control">
+                    <input class="input" id="failureThreshold" type="text" />
+                  </div>
+                </div>
                 <div class="control">
-                  <input class="input" id="pollInterval" type="text" />
+                  <button id="verify" class="button is-link is-right">Verify Credentials</button>
                 </div>
-              </div>
-              <div class="field">
-                <label class="label">Failure Threshold</label>
-                <div class="control">
-                  <input class="input" id="failureThreshold" type="text" />
-                </div>
-              </div>            
-              <div class="control">
-                <button id="verify" class="button is-link is-right">Verify Credentials</button>
               </div>
             </div>
           </div>
+          <div class="tile is-vertical is-6">
+            <div class="tabs">
+              <ul>
+                <li id="settings.tfs.tab" onclick="toggleTab('tfs')" class="is-active"><a>TFS</a></li>
+                <li id="settings.azure.tab" onclick="toggleTab('azure')"><a>AzureDevOps</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- TFS Settings -->
+          <div id="settings.tfs" class="tile is-vertical is-6">
+            <h1 class="title">TFS Settings</h1>
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Instance</label>
+                  <div class="control">
+                    <input class="input" id="tfs.instance" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Collection</label>
+                  <div class="control">
+                    <input class="input" id="tfs.collection" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Project</label>
+                  <div class="control">
+                    <input class="input" id="tfs.project" type="text" />
+                  </div>
+                  <p class="help is-success">Where do I find this?</p>
+                </div>
+                <div class="field">
+                  <label class="label">Release Definition Id</label>
+                  <div class="control">
+                    <input class="input" id="tfs.releaseDefinitionId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Environment Id</label>
+                  <div class="control">
+                    <input class="input" id="tfs.environmentId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Api Version</label>
+                  <div class="control">
+                    <input class="input" id="tfs.apiVersion" type="text" placeholder="4.1-preview.2" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- AzureDevOps Settings -->
+          <div id="settings.azure" class="tile is-vertical is-6">
+            <h1 class="title">AzureDevOps Settings</h1>
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Organization</label>
+                  <div class="control">
+                    <input class="input" id="azure.organization" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Project</label>
+                  <div class="control">
+                    <input class="input" id="azure.project" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Release Definition Id</label>
+                  <div class="control">
+                    <input class="input" id="azure.releaseDefinitionId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Environment Id</label>
+                  <div class="control">
+                    <input class="input" id="azure.environmentId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Api Version</label>
+                  <div class="control">
+                    <input class="input" id="azure.apiVersion" type="text" placeholder="5.1" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <footer class="footer">
+            <div class="control">
+              <button id="save" class="button is-link is-right">Save</button>
+            </div>
+            <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop is-hidden-mobile">
+              <div class="message-header">
+                <button id="closeModal" onclick="closeModal()" class="delete" aria-label="delete"></button>
+              </div>
+              <div id="msg" class="message-body"></div>
+            </article>
+          </footer>
         </div>
-
-        <div class="tabs">
-          <ul>
-            <li id="settings.tfs.tab" onclick="toggleTab('tfs')" class="is-active"><a>TFS</a></li>
-            <li id="settings.azure.tab" onclick="toggleTab('azure')" ><a>AzureDevOps</a></li>
-          </ul>
-        </div>
-
-        <!-- TFS Settings -->
-        <div id="settings.tfs" class="tile is-vertical is-4">
-          <h1 class="title">TFS Settings</h1>
-          <div class="tile">
-            <div class="tile is-parent is-vertical">
-              <div class="field">
-                <label class="label">Instance</label>
-                <div class="control">
-                  <input class="input" id="tfs.instance" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Collection</label>
-                <div class="control">
-                  <input class="input" id="tfs.collection" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Project</label>
-                <div class="control">
-                  <input class="input" id="tfs.project" type="text" />
-                </div>
-                <p class="help is-success">Where do I find this?</p>
-              </div>
-              <div class="field">
-                <label class="label">Release Definition Id</label>
-                <div class="control">
-                  <input class="input" id="tfs.releaseDefinitionId" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Environment Id</label>
-                <div class="control">
-                  <input class="input" id="tfs.environmentId" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Api Version</label>
-                <div class="control">
-                  <input class="input" id="tfs.apiVersion" type="text" placeholder="4.1-preview.2" />
-                </div>
-              </div> 
-            </div>
-          </div>
-        </div> 
-
-        <!-- AzureDevOps Settings -->
-        <div id="settings.azure" class="tile is-vertical is-4">
-          <h1 class="title">AzureDevOps Settings</h1>
-          <div class="tile">
-            <div class="tile is-parent is-vertical">
-              <div class="field">
-                <label class="label">Organization</label>
-                <div class="control">
-                  <input class="input" id="azure.organization" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Project</label>
-                <div class="control">
-                  <input class="input" id="azure.project" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Release Definition Id</label>
-                <div class="control">
-                  <input class="input" id="azure.releaseDefinitionId" type="text" />
-                </div>                
-              </div>
-              <div class="field">
-                <label class="label">Environment Id</label>
-                <div class="control">
-                  <input class="input" id="azure.environmentId" type="text" />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Api Version</label>
-                <div class="control">
-                  <input class="input" id="azure.apiVersion" type="text" placeholder="5.1"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> 
-
-        <footer class="footer">
-          <div class="control">
-            <button id="save" class="button is-link is-right">Save</button>
-          </div>
-          <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop">
-            <div class="message-header">              
-              <button id="closeModal" onclick="closeModal()"  class="delete" aria-label="delete"></button>
-            </div>
-            <div id="msg" class="message-body"></div>
-          </article>           
-        </footer>        
-      </div>    
-    </section>   
+      </div>
+   
 
     <script type='text/javascript'>
       const lib = require('./lib')
@@ -197,7 +188,7 @@
       document.addEventListener('DOMContentLoaded',pageLoaded);
 
       function closeModal() {
-        document.getElementById('genericModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop'
+        document.getElementById('genericModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop is-hidden-mobile'
       }
 
       function toggleTab(option) {
@@ -211,7 +202,7 @@
         document.getElementById(`settings.${option}.tab`).className = 'is-active'
         document.getElementById(`settings.${option}`).className = 'tile is-vertical is-3'
         document.getElementById(`settings.${inActiveOption}.tab`).className = ''
-        document.getElementById(`settings.${inActiveOption}`).className = 'tile is-vertical is-3 is-hidden-desktop is-hidden-tablet'
+        document.getElementById(`settings.${inActiveOption}`).className = 'tile is-vertical is-3 is-hidden-desktop is-hidden-mobile is-hidden-tablet'
       }
 
       function pageLoaded(){

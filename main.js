@@ -1,4 +1,4 @@
-const { app, Menu, Tray, dialog, shell, BrowserWindow } = require('electron')
+const { screen, app, Menu, Tray, dialog, shell, BrowserWindow } = require('electron')
 const Poller = require('./poller')
 const utils = require('./lib')
 const request = require('request');
@@ -22,15 +22,22 @@ function startPolling() {
   let poller = new Poller(appConfig.pollInterval);
   let failCount = 0;
   let stillAlive = true;
+  let display = screen.getPrimaryDisplay();
+  let width = display.bounds.width;
+  let h = display.bounds.height;
+
   tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
 
   mainWindow = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      devTools: false
     },    
-    width: 800,
+    width: 400,
     height: 600,
-    frame: false
+    frame: false,
+    x: width - 400,
+    y: h - 600
   }) 
   mainWindow.loadFile('index.html')
   mainWindow.hide();
