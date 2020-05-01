@@ -102,11 +102,12 @@ module.exports = {
     return {
       tooltip: buildInfo,
       toastMessage: `${branch} Requested for: ${requestedFor} `,
+      requestedFor: `Requested for: ${requestedFor} `,
+      branch: branch =='' ? 'Build Notification' : branch,
       icon: icon,
       msg: msg,
       releaseName: buildData.value[0].release.name,      
       deploymentStatus: deployStatus,
-      requestedFor: buildData.value[0].requestedFor.displayName,
       completedOn:  completedOn,
       releaseUrl: buildData.value[0].release.webAccessUri 
     }

@@ -3,18 +3,13 @@ const Poller = require('./poller')
 const utils = require('./lib')
 const request = require('request');
 const log = require('electron-log');
-const WindowsToaster = require('node-notifier').WindowsToaster;
+const path = require('path')
 
 var appConfig = {}
 let tray = null
 let lastestBuild = null
 var mainWindow = null
 let initialized = false
-
-var notifier = new WindowsToaster({
-  withFallback: false,
-  customPath: undefined
-});
 
 appConfig = utils.getConfig('./config.json')
 
@@ -69,7 +64,7 @@ function startPolling() {
           tray.setImage(utils.getResource('./images/' + build.icon))
           log.info(`updated tray [${build}] | lastestBuild[${lastestBuild}] | build.releaseName[${build.releaseName}]`)
           if (initialized && lastestBuild != build.releaseName) {
-            showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)
+            showWindowsToast(build.releaseName, build.requestedFor, build.deploymentStatus, build.branch)
           }
           lastestBuild = build.releaseName
           initialized = true
@@ -146,16 +141,12 @@ let commonMenuOpts = [
   }
 ]
 
-function showWindowsToast(title, message, releaseUrl) {
-  notifier.notify({ title: title, message: message, appID: 'Build notification', wait: true },
-    function (error, response) {
-      if (error) {
-        log.error(error)
-      }      
-    }
-  );
+function showWindowsToast(title, message, status, branch) {
+  var child = require('child_process').execFile;
+  var executablePath = path.join(__dirname, './node_modules/node-notifier/vendor/snoreToast/snoretoast-x64.exe');  
+  var parameters = ['-t', `${title}`, '-m', `${message}`, '-p', `${utils.getResource(`./images/img_${status}_large.png`)}`,'-appID', branch];
 
-  notifier.on('click', function(notifierObject, options, event) {
-    shell.openExternal(releaseUrl)
+  child(executablePath, parameters, function(err, data) {
+      log.error(err)
   });
 }
