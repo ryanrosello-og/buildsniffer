@@ -36,8 +36,9 @@ function startPolling() {
     width: 400,
     height: 600,
     frame: false,
+    transparent: true, 
     x: width - 400,
-    y: h - 600
+    y: h - 650
   }) 
   mainWindow.loadFile('index.html')
   mainWindow.hide();

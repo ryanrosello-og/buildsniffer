@@ -4,39 +4,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Hello World!</title>
+    <title>Remarkable TFS or AzureDevOps Release Notifier</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
     <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <style> ::-webkit-scrollbar { display: none; } </style>
   </head>
   <body>
-    <section class="hero is-primary is-medium">
-      <!-- Hero head: will stick at the top -->
-      <div class="hero-head">
-        <nav class="navbar">
-          <div class="container">
-            <div class="navbar-brand">
-              <a class="navbar-item">
-                <span>Configure</span>
-              </a>
-            </div>
-            <div id="navbarMenuHeroA" class="navbar-menu">
-              <div class="navbar-end">
-                <span class="navbar-item">
-                  <a class="button is-primary is-inverted">
-                    <div class="control">
-                      <button id="close" class="button is-link is-right">Close</button>
-                    </div>
-                  </a>
-                </span>
-              </div>
-            </div>
-          </div>
-        </nav>
+    <div id="main">
+    <div class="columns">
+      <div class="column">
+        <div class="control is-pulled-right" >
+          <a>
+            <img id="close" height="42" width="42" src="./images/img_close_window_52.png"></img>
+          </a>
+        </div>
       </div>
-    </section>
-
+    </div>
+    
       <div class="tile is-ancestor">
         <div class="hero-body">
           <div class="tile is-vertical is-6">
@@ -69,11 +54,13 @@
                   </div>
                 </div>
                 <div class="control">
-                  <button id="verify" class="button is-link is-right">Verify Credentials</button>
+                  <button id="verify" class="button is-link is-pulled-right">Verify Credentials</button>
                 </div>
               </div>
             </div>
           </div>
+          <br />
+          <br />
           <div class="tile is-vertical is-6">
             <div class="tabs">
               <ul>
@@ -84,7 +71,7 @@
           </div>
           <!-- TFS Settings -->
           <div id="settings.tfs" class="tile is-vertical is-6">
-            <h1 class="title">TFS Settings</h1>
+
             <div class="tile">
               <div class="tile is-parent is-vertical">
                 <div class="field">
@@ -130,7 +117,6 @@
       
           <!-- AzureDevOps Settings -->
           <div id="settings.azure" class="tile is-vertical is-6">
-            <h1 class="title">AzureDevOps Settings</h1>
             <div class="tile">
               <div class="tile is-parent is-vertical">
                 <div class="field">
@@ -167,9 +153,8 @@
             </div>
           </div>
       
-          <footer class="footer">
             <div class="control">
-              <button id="save" class="button is-link is-right">Save</button>
+              <button id="save" class="button is-link is-pulled-right">Save</button>
             </div>
             <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop is-hidden-mobile">
               <div class="message-header">
@@ -177,10 +162,9 @@
               </div>
               <div id="msg" class="message-body"></div>
             </article>
-          </footer>
         </div>
       </div>
-   
+    </div>
 
     <script type='text/javascript'>
       const lib = require('./lib')
@@ -231,6 +215,8 @@
           } else {
             log.error('Failed to load config - tfs or azure not defined')
           }
+
+          document.getElementById('main')[0].style.setProperty("border-radius", "5px")
       }
 
       require('electron').ipcRenderer.on('some_js_Method', (event, message) => {
