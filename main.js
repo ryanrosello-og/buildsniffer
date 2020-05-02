@@ -1,19 +1,15 @@
-const { app, Menu, Tray, dialog, shell } = require('electron')
+const { screen, app, Menu, Tray, dialog, shell, BrowserWindow } = require('electron')
 const Poller = require('./poller')
 const utils = require('./lib')
 const request = require('request');
 const log = require('electron-log');
-const WindowsToaster = require('node-notifier').WindowsToaster;
+const path = require('path')
 
 var appConfig = {}
 let tray = null
 let lastestBuild = null
+var mainWindow = null
 let initialized = false
-
-var notifier = new WindowsToaster({
-  withFallback: false,
-  customPath: undefined
-});
 
 appConfig = utils.getConfig('./config.json')
 
@@ -26,8 +22,28 @@ function startPolling() {
   let poller = new Poller(appConfig.pollInterval);
   let failCount = 0;
   let stillAlive = true;
+  let display = screen.getPrimaryDisplay();
+  let width = display.bounds.width;
+  let h = display.bounds.height;
 
-  poller.onPoll(() => {
+  tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
+
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+      devTools: false
+    },    
+    width: 400,
+    height: 600,
+    frame: false,
+    transparent: true, 
+    x: width - 400,
+    y: h - 650
+  }) 
+  mainWindow.loadFile('index.html')
+  mainWindow.hide();
+
+  poller.onPoll(() => {    
     if (failCount < appConfig.failureThreshold) {
       request({ url: utils.getUrl(appConfig), headers: { 'Authorization': utils.generateAuthToken(appConfig.username, appConfig.pat) } }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -54,11 +70,9 @@ function startPolling() {
           tray.setToolTip('' + build.tooltip)
           tray.setContextMenu(contextMenu)
           tray.setImage(utils.getResource('./images/' + build.icon))
-          log.info('updated tray => ', build)
-          log.info('lastestBuild => ', lastestBuild)
-          log.info('build.releaseName => ', build.releaseName)
+          log.info(`updated tray [${build}] | lastestBuild[${lastestBuild}] | build.releaseName[${build.releaseName}]`)
           if (initialized && lastestBuild != build.releaseName) {
-            showWindowsToast(build.tooltip, build.toastMessage, build.releaseUrl)
+            showWindowsToast(build.releaseName, build.requestedFor, build.deploymentStatus, build.branch)
           }
           lastestBuild = build.releaseName
           initialized = true
@@ -89,11 +103,13 @@ function startPolling() {
   poller.poll();
 }
 
-app.whenReady().then(startPolling)
+const gotTheLock = app.requestSingleInstanceLock()
 
-app.on('ready', () => {
-  tray = new Tray(utils.getResource('./images/img_icons8-final-state-40.png'))
-})
+if (!gotTheLock) {  // prevent multiple instances firing up
+  app.quit()
+} else {
+  app.whenReady().then(startPolling)
+}
 
 let commonMenuOpts = [
   { type: 'separator' },
@@ -101,9 +117,9 @@ let commonMenuOpts = [
     label: 'Configure',
     icon: utils.getResource('./images/img_config.png'),
     click: function () {
-      var config = utils.getResource('./config.json')
-      log.info('Opening config =>', config)
-      shell.openItem(config)
+      mainWindow.webContents.openDevTools()
+      mainWindow.show();
+      mainWindow.webContents.send('some_js_Method', 'window created!');
     }
   },
   {
@@ -115,6 +131,15 @@ let commonMenuOpts = [
     }
   },
   {
+    label: 'Restart App',
+    icon: utils.getResource('./images/img_restart.png'),
+    click: function () {
+      log.info('Restarting ...')
+      app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+      app.exit(0)
+    }
+  },  
+  {
     label: 'Exit',
     icon: utils.getResource('./images/img_exit.png'),
     click: function () {
@@ -124,16 +149,12 @@ let commonMenuOpts = [
   }
 ]
 
-function showWindowsToast(title, message, releaseUrl) {
-  notifier.notify({ title: title, message: message, appID: 'Build notification', wait: true },
-    function (error, response) {
-      if (error) {
-        log.error(error)
-      }      
-    }
-  );
+function showWindowsToast(title, message, status, branch) {
+  var child = require('child_process').execFile;
+  var executablePath = path.join(__dirname, './node_modules/node-notifier/vendor/snoreToast/snoretoast-x64.exe');  
+  var parameters = ['-t', `${title}`, '-m', `${message}`, '-p', `${utils.getResource(`./images/img_${status}_large.png`)}`,'-appID', branch];
 
-  notifier.on('click', function(notifierObject, options, event) {
-    shell.openExternal(build.releaseUrl)
+  child(executablePath, parameters, function(err, data) {
+      log.error(err)
   });
 }

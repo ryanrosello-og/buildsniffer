@@ -8,6 +8,133 @@ describe('./lib.js', () => {
     });
   });
 
+  describe('validateConfig(config)', () => {
+    it('returns no errors when the tfs configuration valid', () => {        
+      let appConfig = {
+        pat: 'fdsdfsdytvvjgq5xxx5pn66pmut2hd6bsh3sz464dloffffh4jw2nq',
+        username: 'autotest',
+        pollInterval: 21000,
+        failureThreshold: 10,
+        tfsOrazure: 'tfs',
+        tfs: {
+          releaseDefinitionId: 881,
+          environmentId: 111,
+          instance: 'goolge',
+          collection: 'internal',
+          project: 'goth',
+          apiVersion: '1.1'
+        },
+        azure: {
+          organization: '',          
+          project: '',
+          apiVersion: ''
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result.hasErrors).toEqual(false)
+    });
+
+    it('returns no errors when the azure configuration valid', () => {        
+      let appConfig = {
+        pat: 'fdsdfsdytvvjgq5xxx5pn66pmut2hd6bsh3sz464dloffffh4jw2nq',
+        username: 'autotest',
+        pollInterval: 21000,
+        failureThreshold: 10,
+        tfsOrazure: 'azure',
+        tfs: {
+          instance: '',
+          collection: '',
+          project: '',
+          apiVersion: ''
+        },
+        azure: {
+          organization: 'goolge',          
+          project: 'goth',
+          apiVersion: '1.1'
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result.hasErrors).toEqual(false)
+    });    
+
+    it('returns errors when mandatory keys are missing', () => {        
+      let appConfig = {
+        pat: '',
+        username: '',
+        pollInterval: null,
+        failureThreshold: null,
+        tfsOrazure: '',
+        tfs: {
+          instance: '',
+          collection: '',
+          project: '',
+          apiVersion: ''
+        },
+        azure: {
+          organization: 'goolge',          
+          project: 'goth',
+          apiVersion: '1.1'
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result.hasErrors).toEqual(true)
+      expect(result.errors.length).toEqual(6)
+    });    
+
+    it('returns errors when invalid tfs configuration is supplied', () => {        
+      let appConfig = {
+        pat: 'fdsdfsdytvvjgq5xxx5pn66pmut2hd6bsh3sz464dloffffh4jw2nq',
+        username: 'autotest',
+        pollInterval: 21000,
+        failureThreshold: 10,
+        tfsOrazure: 'tfs',
+        tfs: {
+          instance: '',
+          collection: '',
+          project: '',
+          apiVersion: ''
+        },
+        azure: {
+          organization: 'goolge',          
+          project: 'goth',
+          apiVersion: '1.1'
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result.hasErrors).toEqual(true)
+      expect(result.errors.length).toEqual(4)    
+    });
+    
+    it('returns errors when invalid azure configuration is supplied', () => {        
+      let appConfig = {
+        pat: 'fdsdfsdytvvjgq5xxx5pn66pmut2hd6bsh3sz464dloffffh4jw2nq',
+        username: 'autotest',
+        pollInterval: 21000,
+        failureThreshold: 10,
+        tfsOrazure: 'azure',
+        tfs: {
+          instance: '',
+          collection: '',
+          project: '',
+          apiVersion: ''
+        },
+        azure: {
+          organization: '',          
+          project: '',
+          apiVersion: ''
+        }
+      }
+
+      let result = lib.validateConfig(appConfig)      
+      expect(result.hasErrors).toEqual(true)
+      expect(result.errors.length).toEqual(3)        
+    });    
+  });  
+
   describe('getUrl(appConfig)', () => {
     it('generates valid request url for tfs', () => {        
       let appConfig = {

@@ -4,6 +4,40 @@ const moment = require('moment')
 const log = require('electron-log')
 
 module.exports = {
+  validateConfig(config) {    
+    var errorMessages = []
+
+    if(this.isEmpty(config.pat)) { errorMessages.push('PAT token is required') }
+    if(this.isEmpty(config.username)) { errorMessages.push('username is required') }
+    if(this.isEmpty(config.pollInterval)) { errorMessages.push('pollInterval is required') }
+    if(this.isEmpty(config.failureThreshold)) { errorMessages.push('failureThreshold is required') }
+    if(this.isEmpty(config.tfsOrazure)) { errorMessages.push('tfsOrazure token is required') }
+
+    if(config.tfsOrazure == 'tfs') {
+      if(this.isEmpty(config.tfs.instance)) { errorMessages.push('tfs instance is required') }
+      if(this.isEmpty(config.tfs.collection)) { errorMessages.push('tfs collection is required') }
+      if(this.isEmpty(config.tfs.project)) { errorMessages.push('tfs project is required') }
+      if(this.isEmpty(config.tfs.apiVersion)) { errorMessages.push('tfs apiVersion is required') }
+    } else if(config.tfsOrazure == 'azure') {
+      if(this.isEmpty(config.azure.organization)) { errorMessages.push('azure organization is required') }
+      if(this.isEmpty(config.azure.project)) { errorMessages.push('azure project is required') }
+      if(this.isEmpty(config.azure.apiVersion)) { errorMessages.push('azure apiVersion is required') }
+    } else {
+      errorMessages.push('tfsOrazure value can either be "tfs" or "azure"')
+    }
+
+    return {
+      hasErrors: errorMessages.length > 0 ? true : false,
+      errors: errorMessages
+    }
+  },
+  isEmpty(str) {
+    return (!str || 0 === str.length);
+  },
+  setConfig(config, configPath) {
+    let data = JSON.stringify(config);
+    fs.writeFileSync(configPath, data);
+  },
   getResource(resource) {
     try {
       return path.join(__dirname, resource);
@@ -68,11 +102,12 @@ module.exports = {
     return {
       tooltip: buildInfo,
       toastMessage: `${branch} Requested for: ${requestedFor} `,
+      requestedFor: `Requested for: ${requestedFor} `,
+      branch: branch =='' ? 'Build Notification' : branch,
       icon: icon,
       msg: msg,
       releaseName: buildData.value[0].release.name,      
       deploymentStatus: deployStatus,
-      requestedFor: buildData.value[0].requestedFor.displayName,
       completedOn:  completedOn,
       releaseUrl: buildData.value[0].release.webAccessUri 
     }
