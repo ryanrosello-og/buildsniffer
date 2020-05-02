@@ -205,17 +205,16 @@ describe('./lib.js', () => {
       testData = require('./bakedTestData.json')
       testData.value[0].deploymentStatus = 'failed'
       let result = lib.parseResponse(testData)
-      expect(result).toEqual({
-        tooltip: '❌ Release-3 completed a year ago',
-        toastMessage: 'refs/heads/develop Requested for: ry rose ',
-        icon: 'img_fail.png',
-        msg: 'Release-3 completed a year ago',
-        releaseName: 'Release-3',
-        deploymentStatus: 'failed',
-        requestedFor: 'ry rose',
-        completedOn: 'completed a year ago',
-        releaseUrl: 'https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary'
-      })      
+
+      expect(result.tooltip).toContain('❌ Release-3 completed')
+      expect(result.toastMessage).toContain('Requested for: ry rose ')
+      expect(result.icon).toEqual('img_fail.png')
+      expect(result.msg).toContain('Release-3 completed')
+      expect(result.releaseName).toEqual('Release-3')
+      expect(result.deploymentStatus).toEqual('failed')
+      expect(result.requestedFor).toContain('ry rose')
+      expect(result.completedOn).toContain('completed')
+      expect(result.releaseUrl).toEqual('https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary')
     });
 
     it('parses releases that have passed', () => {  
@@ -223,17 +222,17 @@ describe('./lib.js', () => {
       testData = require('./bakedTestData.json')
       testData.value[0].deploymentStatus = 'succeeded'
       let result = lib.parseResponse(testData)
-      expect(result).toEqual({
-        tooltip: '✅ Release-3 completed a year ago',
-        toastMessage: 'refs/heads/develop Requested for: ry rose ',
-        icon: 'img_pass.png',
-        msg: 'Release-3 completed a year ago',
-        releaseName: 'Release-3',
-        deploymentStatus: 'succeeded',
-        requestedFor: 'ry rose',
-        completedOn: 'completed a year ago',
-        releaseUrl: 'https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary'
-      })  
+
+      expect(result.tooltip).toContain('✅ Release-3 completed')
+      expect(result.toastMessage).toContain('Requested for: ry rose ')
+      expect(result.icon).toEqual('img_pass.png')
+      expect(result.msg).toContain('Release-3 completed')
+      expect(result.releaseName).toEqual('Release-3')
+      expect(result.deploymentStatus).toEqual('succeeded')
+      expect(result.requestedFor).toContain('ry rose')
+      expect(result.completedOn).toContain('completed')
+      expect(result.releaseUrl).toEqual('https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary')
+
     });
   });   
 });
