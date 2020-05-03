@@ -53,9 +53,6 @@
                     <input class="input" id="failureThreshold" type="text" />
                   </div>
                 </div>
-                <div class="control">
-                  <button id="verify" class="button is-link is-pulled-right">Verify Credentials</button>
-                </div>
               </div>
             </div>
           </div>
@@ -169,6 +166,7 @@
     <script type='text/javascript'>
       const lib = require('./lib')
       const log = require('electron-log');
+      
       document.addEventListener('DOMContentLoaded',pageLoaded);
 
       function closeModal() {
@@ -191,7 +189,7 @@
 
       function pageLoaded(){
           console.log('The page is loaded')       
-          const appConfig = lib.getConfig('./config.json')
+          const appConfig = lib.getConfig()
           document.getElementById('username').value = appConfig.username
           document.getElementById('pat').value = appConfig.pat
           document.getElementById('pollInterval').value = appConfig.pollInterval
@@ -216,20 +214,11 @@
             log.error('Failed to load config - tfs or azure not defined')
           }
 
-          document.getElementById('main')[0].style.setProperty("border-radius", "5px")
+          document.getElementById('main').style.setProperty("border-radius", "5px")
+          document.getElementsByTagName('body')[0].style.setProperty("border-radius", "5px")
       }
 
-      document.getElementById('verify').onclick = function(){
-        console.log('yooooooooooooooooooooooooo')
-      }
-
-      document.getElementById('close').onclick = function() {
-        const electron = require('electron')
-        electron.remote.getCurrentWindow().hide()
-      }
-
-      document.getElementById('save').onclick = function(){
-        console.log('Save clicked')
+      function getConfigFromUi(){
         var tfsOrazure = ''
         if(document.getElementById('settings.tfs.tab').className.includes('active')) {
           tfsOrazure = 'tfs'
@@ -237,7 +226,7 @@
           tfsOrazure = 'azure'
         }
 
-        const appConfig = {
+        return {
           username: document.getElementById('username').value,
           pat: document.getElementById('pat').value,
           pollInterval: document.getElementById('pollInterval').value,
@@ -259,19 +248,51 @@
             'apiVersion' : document.getElementById('azure.apiVersion').value
           }
         }
+      }
+
+      function testConfiguration(){
+        const request = require('request')
+        const appConfig = getConfigFromUi()
+
+        return new Promise((resolve, reject) =>{
+          request({ url: lib.getUrl(appConfig), headers: { 'Authorization': lib.generateAuthToken(appConfig.username, appConfig.pat) } }, function (error, response, body) {
+            if (error || response.statusCode != 200) {
+              reject({ 
+                hasErrors: true,
+                errors: `${response.statusCode} : ${response.statusMessage}`
+              })
+            } else {
+              resolve({ hasErrors: false})
+            }          
+          })
+        })
+      }
+
+      document.getElementById('close').onclick = function() {
+        const electron = require('electron')
+        electron.remote.getCurrentWindow().hide()
+      }
+
+      document.getElementById('save').onclick = function(){
+        log.info('Save clicked')
+        const appConfig = getConfigFromUi()
 
         var validationResult = lib.validateConfig(appConfig)
 
         if(!validationResult.hasErrors) {
-          lib.setConfig(appConfig)
-          document.getElementById('msg').innerText = 'Configuration Saved - dont forget to restart the app'
-          document.getElementById('genericModal').className = 'message is-success'
-          console.log('Config updated')
-          // restart app
+          testConfiguration().then((result) =>{
+            lib.setConfig(appConfig)
+            document.getElementById('msg').innerText = 'Configuration Saved - dont forget to restart the app'
+            document.getElementById('genericModal').className = 'message is-success'
+            log.info('Config updated')
+          }).catch(e => {
+            document.getElementById('msg').innerText = e.errors 
+            document.getElementById('genericModal').className = 'message is-danger'
+          })
         } else {
           document.getElementById('msg').innerText = validationResult.errors.join('\n');
           document.getElementById('genericModal').className = 'message is-danger'
-        }        
+        }       
       }   
     </script>  
   </body>
