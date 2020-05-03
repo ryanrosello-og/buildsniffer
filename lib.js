@@ -1,7 +1,7 @@
 const path = require('path')
-const fs = require('fs')
 const moment = require('moment')
 const log = require('electron-log')
+const Store = require('electron-store')
 
 module.exports = {
   validateConfig(config) {    
@@ -34,9 +34,21 @@ module.exports = {
   isEmpty(str) {
     return (!str || 0 === str.length);
   },
-  setConfig(config, configPath) {
-    let data = JSON.stringify(config);
-    fs.writeFileSync(configPath, data);
+  setConfig(config) {
+    try{
+      const store = new Store();
+
+      store.set(config);
+      return {
+        hasErrors: false,
+        errors: []
+      }      
+    } catch (e) {
+      return {
+        hasErrors: true,
+        errors: e
+      }
+    }
   },
   getResource(resource) {
     try {
@@ -46,24 +58,35 @@ module.exports = {
       throw new Error('Failed to find resource')
     }
   },
-  getConfig(config) {
-    try {
-      let dataPath = this.getResource(config);      
-      data = JSON.parse(fs.readFileSync(dataPath));
-      
-      if (data.tfsOrazure.toLowerCase() != 'tfs' && data.tfsOrazure.toLowerCase() != 'azure') {
-        let error = 'Unable to determine configuration [tfsOrazure], valid value: "tfs" or "azure"'
-        log.error(error)
-        throw new Error(error)
-      }
-
-      log.info('Loaded config: ', data)
-      return data
-    } catch (err) {
-      log.error(err)
-      throw new Error(err)
-    }
+  getConfig() {
+    const store = new Store();
+    return store.store
   },
+  initConfig() {
+    const store = new Store();
+    store.set({
+      failureThreshold: 10,      
+      pollInterval: 5000,
+      pat: '<pat here>',
+      username: '<user name here>',
+      tfsOrazure: 'azure',
+      tfs: {
+        apiVersion: '4.1-preview.2',
+        collection: '',
+        environmentId: '',
+        instance: '',
+        project: '',
+        releaseDefinitionId: ''
+      },
+      azure:{
+        apiVersion: '5.1',
+        environmentId: '',
+        organization: 'ryanrosello0326',
+        project: 'teTs',
+        releaseDefinitionId: '',
+      }
+    });
+  },  
   parseResponse(data) {
     let buildInfo, icon, deployStatus, releaseName, completedOn, branch = ''
     if(this.isJson(data)) {

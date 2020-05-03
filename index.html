@@ -219,10 +219,6 @@
           document.getElementById('main')[0].style.setProperty("border-radius", "5px")
       }
 
-      require('electron').ipcRenderer.on('some_js_Method', (event, message) => {
-        console.log(message)  // Prints 'window created!'
-      })
-
       document.getElementById('verify').onclick = function(){
         console.log('yooooooooooooooooooooooooo')
       }
@@ -267,14 +263,14 @@
         var validationResult = lib.validateConfig(appConfig)
 
         if(!validationResult.hasErrors) {
-          lib.setConfig(appConfig, './config.json')
+          lib.setConfig(appConfig)
           document.getElementById('msg').innerText = 'Configuration Saved - dont forget to restart the app'
           document.getElementById('genericModal').className = 'message is-success'
           console.log('Config updated')
+          // restart app
         } else {
           document.getElementById('msg').innerText = validationResult.errors.join('\n');
           document.getElementById('genericModal').className = 'message is-danger'
-          console.log('TODO - show bulma error here', validationResult.errors)
         }        
       }   
     </script>  
