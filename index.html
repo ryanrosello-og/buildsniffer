@@ -149,16 +149,15 @@
               </div>
             </div>
           </div>
-      
-            <div class="control">
-              <button id="save" class="button is-link is-pulled-right">Save</button>
-            </div>
             <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop is-hidden-mobile">
               <div class="message-header">
                 <button id="closeModal" onclick="closeModal()" class="delete" aria-label="delete"></button>
               </div>
               <div id="msg" class="message-body"></div>
             </article>
+            <div class="control">
+              <button id="save" class="button is-link is-pulled-right">Save</button>
+            </div>
         </div>
       </div>
     </div>
@@ -268,6 +267,8 @@
         })
       }
 
+      function sleep() {}      
+
       document.getElementById('close').onclick = function() {
         const electron = require('electron')
         electron.remote.getCurrentWindow().hide()
@@ -282,9 +283,15 @@
         if(!validationResult.hasErrors) {
           testConfiguration().then((result) =>{
             lib.setConfig(appConfig)
-            document.getElementById('msg').innerText = 'Configuration Saved - dont forget to restart the app'
+            document.getElementById('msg').innerText = 'Configuration Saved - restarting the app ...'
             document.getElementById('genericModal').className = 'message is-success'
             log.info('Config updated')
+            
+            setTimeout(sleep, 50000);
+            //restart the app
+            const remote = require('electron').remote;
+            remote.app.relaunch();
+            remote.app.exit(0);
           }).catch(e => {
             document.getElementById('msg').innerText = e.errors 
             document.getElementById('genericModal').className = 'message is-danger'
