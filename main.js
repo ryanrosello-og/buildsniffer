@@ -72,6 +72,7 @@ function startPolling() {
   
             if (build == null) {
               log.info('No deploymets found')
+              failCount++
               return
             }
   
@@ -178,3 +179,18 @@ function showWindowsToast(title, message, status, branch) {
       log.error(err)
   });
 }
+
+function showConfigIsValid() {
+  dialog.showMessageBox({
+    title:'Configuration Validation Successful', 
+    message: 'The application will now restart.',
+    buttons:['Ok'],
+    icon: utils.getResource(`./images/img_succeeded_large.png`)
+  }).then(()=>{
+    log.info('Restarting ...')
+    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+    app.exit(0)
+  })
+}
+
+exports.showConfigIsValid = showConfigIsValid;
