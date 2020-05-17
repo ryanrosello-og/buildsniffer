@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "windows-installer": "node ./generate-installer.js",
-    "make-windows": "./node_modules/.bin/electron-packager . yuarpp --overwrite  --platform=win32 --arch=x64  --prune=true --out=release-builds --version-string.CompanyName=RR --version-string.FileDescription=RR --version-string.ProductName=yuarpp",
+    "make-windows": "./node_modules/.bin/electron-packager . yuarpp --overwrite  --platform=win32 --arch=x64  --prune=true --out=release-builds --version-string.CompanyName=RR --version-string.FileDescription=RR --version-string.ProductName=yuarpp --electron-version 8.2.1",
     "make-nix": "./node_modules/.bin/electron-packager . yuarpp --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds-nix",
     "lint": "echo \"No linting configured\"",
     "test": "jasmine tests/*spec.js"
