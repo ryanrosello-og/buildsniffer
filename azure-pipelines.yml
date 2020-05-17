@@ -17,6 +17,6 @@ steps:
   displayName: 'NPM install'
 
 - script: |
-    npm run tests
+    npm run test
   displayName: 'Run tests'
 
