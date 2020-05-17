@@ -66,7 +66,7 @@ module.exports = {
     const store = new Store();
     store.set({
       failureThreshold: 10,      
-      pollInterval: 5000,
+      pollInterval: 60000,
       pat: '<pat here>',
       username: '<user name here>',
       tfsOrazure: 'azure',
@@ -81,8 +81,8 @@ module.exports = {
       azure:{
         apiVersion: '5.1',
         environmentId: '',
-        organization: 'ryanrosello0326',
-        project: 'teTs',
+        organization: '',
+        project: '',
         releaseDefinitionId: '',
       }
     });
