@@ -70,7 +70,7 @@ The installation package will be created in the `./tmp/build/installer64` folder
 ### Tests
 Run the tests by invoking the following commands:
 
-`npm run tests`
+`npm run test`
 
 ### Acknowledgements
 
