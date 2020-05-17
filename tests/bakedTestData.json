@@ -1,0 +1,254 @@
+{
+    "count": 6,
+    "value": [
+        {
+            "id": 5,
+            "release": {
+                "id": 3,
+                "name": "Release-3",
+                "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3",
+                "artifacts": [
+                    {
+                        "sourceId": "f57a3cd6-c887-4871-be34-9beba1e2f48f:2",
+                        "type": "Build",
+                        "alias": "_teTs-CI",
+                        "definitionReference": {
+                            "artifactSourceDefinitionUrl": {
+                                "id": "https://dev.azure.com/autotest0326/_permalink/_build/index?collectionId=ad0f9bfe-b0df-46d6-bb67-ffa9f6131c7e&projectId=f57a3cd6-c887-4871-be34-9beba1e2f48f&definitionId=2",
+                                "name": ""
+                            },
+                            "definition": {
+                                "id": "2",
+                                "name": "teTs-CI"
+                            },
+                            "IsMultiDefinitionType": {
+                                "id": "False",
+                                "name": "False"
+                            },
+                            "project": {
+                                "id": "f57a3cd6-c887-4871-be34-9beba1e2f48f",
+                                "name": "teTs"
+                            },
+                            "pullRequestMergeCommitId": {
+                                "id": "94183adab9336728a0b27b293860bad846abebcf",
+                                "name": "94183adab9336728a0b27b293860bad846abebcf"
+                            },
+                            "repository": {
+                                "id": "8430bdc6-ee49-411a-8e91-cd0a48f9c9d6",
+                                "name": "teTs"
+                            },
+                            "version": {
+                                "id": "2",
+                                "name": "2"
+                            },
+                            "artifactSourceVersionUrl": {
+                                "id": "https://dev.azure.com/autotest0326/_permalink/_build/index?collectionId=ad0f9bfe-b0df-46d6-bb67-ffa9f6131c7e&projectId=f57a3cd6-c887-4871-be34-9beba1e2f48f&buildId=2",
+                                "name": ""
+                            },
+                            "branch": {
+                                "id": "refs/heads/develop",
+                                "name": "refs/heads/develop"
+                            }
+                        },
+                        "isPrimary": true,
+                        "isRetained": false
+                    }
+                ],
+                "webAccessUri": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary",
+                "_links": {
+                    "self": {
+                        "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3"
+                    },
+                    "web": {
+                        "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary"
+                    }
+                }
+            },
+            "releaseDefinition": {
+                "id": 1,
+                "name": "Pipe",
+                "path": "\\",
+                "projectReference": {
+                    "id": "f57a3cd6-c887-4871-be34-9beba1e2f48f",
+                    "name": null
+                },
+                "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/1",
+                "_links": {
+                    "self": {
+                        "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/1"
+                    },
+                    "web": {
+                        "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?definitionId=1"
+                    }
+                }
+            },
+            "releaseEnvironment": {
+                "id": 3,
+                "name": "Stage 1",
+                "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/3",
+                "_links": {
+                    "self": {
+                        "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/3"
+                    },
+                    "web": {
+                        "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-logs&environmentId=3&releaseEnvironmentId=3"
+                    }
+                }
+            },
+            "projectReference": null,
+            "definitionEnvironmentId": 1,
+            "attempt": 1,
+            "reason": "manual",
+            "deploymentStatus": "succeeded",
+            "operationStatus": "Approved",
+            "requestedBy": {
+                "displayName": "ry rose",
+                "url": "https://spsprodeau1.vssps.visualstudio.com/Ad104ff3d-3633-402f-93b8-85e15a91aa6e/_apis/Identities/f1629514-48ef-4d10-b2df-e705b6c250ab",
+                "_links": {
+                    "avatar": {
+                        "href": "https://dev.azure.com/autotest0326/_apis/GraphProfile/MemberAvatars/msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4"
+                    }
+                },
+                "id": "f1629514-48ef-4d10-b2df-e705b6c250ab",
+                "uniqueName": "autotest@hotmail.com",
+                "imageUrl": "https://dev.azure.com/autotest0326/_apis/GraphProfile/MemberAvatars/msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4",
+                "descriptor": "msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4"
+            },
+            "requestedFor": {
+                "displayName": "ry rose",
+                "url": "https://spsprodeau1.vssps.visualstudio.com/Ad104ff3d-3633-402f-93b8-85e15a91aa6e/_apis/Identities/f1629514-48ef-4d10-b2df-e705b6c250ab",
+                "_links": {
+                    "avatar": {
+                        "href": "https://dev.azure.com/autotest0326/_apis/GraphProfile/MemberAvatars/msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4"
+                    }
+                },
+                "id": "f1629514-48ef-4d10-b2df-e705b6c250ab",
+                "uniqueName": "autotest@hotmail.com",
+                "imageUrl": "https://dev.azure.com/autotest0326/_apis/GraphProfile/MemberAvatars/msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4",
+                "descriptor": "msa.Y2FkNDFhOGQtM2QwNy03ZDU5LThiNmYtNTM0YWRkZWEzOTU4"
+            },
+            "queuedOn": "2018-10-18T10:27:08.41Z",
+            "startedOn": "2018-10-18T10:27:14.707Z",
+            "completedOn": "2018-10-18T10:27:31.05Z",
+            "lastModifiedOn": "2018-10-18T10:27:31.05Z",
+            "lastModifiedBy": {
+                "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+                "id": "0000000d-0000-8888-8000-000000000000",
+                "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+                "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+            },
+            "conditions": [],
+            "preDeployApprovals": [
+                {
+                    "id": 10,
+                    "revision": 1,
+                    "approvalType": "preDeploy",
+                    "createdOn": "2018-10-18T10:27:09.49Z",
+                    "modifiedOn": "2018-10-18T10:27:09.503Z",
+                    "status": "approved",
+                    "comments": "",
+                    "isAutomated": true,
+                    "isNotificationOn": false,
+                    "trialNumber": 1,
+                    "attempt": 1,
+                    "rank": 1,
+                    "release": {
+                        "id": 3,
+                        "name": "Release-3",
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3",
+                        "_links": {
+                            "web": {
+                                "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary"
+                            },
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3"
+                            }
+                        }
+                    },
+                    "releaseDefinition": {
+                        "id": 0,
+                        "name": "Pipe",
+                        "path": "\\",
+                        "projectReference": null,
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/0",
+                        "_links": {
+                            "web": {
+                                "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?definitionId=0"
+                            },
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/0"
+                            }
+                        }
+                    },
+                    "releaseEnvironment": {
+                        "id": 3,
+                        "name": "Stage 1",
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/3",
+                        "_links": {
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/0"
+                            }
+                        }
+                    },
+                    "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/approvals/10"
+                }
+            ],
+            "postDeployApprovals": [
+                {
+                    "id": 12,
+                    "revision": 1,
+                    "approvalType": "postDeploy",
+                    "createdOn": "2018-10-18T10:27:31.037Z",
+                    "modifiedOn": "2018-10-18T10:27:31.037Z",
+                    "status": "approved",
+                    "comments": "",
+                    "isAutomated": true,
+                    "isNotificationOn": false,
+                    "trialNumber": 1,
+                    "attempt": 1,
+                    "rank": 3,
+                    "release": {
+                        "id": 3,
+                        "name": "Release-3",
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3",
+                        "_links": {
+                            "web": {
+                                "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?releaseId=3&_a=release-summary"
+                            },
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3"
+                            }
+                        }
+                    },
+                    "releaseDefinition": {
+                        "id": 0,
+                        "name": "Pipe",
+                        "path": "\\",
+                        "projectReference": null,
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/0",
+                        "_links": {
+                            "web": {
+                                "href": "https://dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_release?definitionId=0"
+                            },
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/definitions/0"
+                            }
+                        }
+                    },
+                    "releaseEnvironment": {
+                        "id": 3,
+                        "name": "Stage 1",
+                        "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/3",
+                        "_links": {
+                            "self": {
+                                "href": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/releases/3/environments/0"
+                            }
+                        }
+                    },
+                    "url": "https://vsrm.dev.azure.com/autotest0326/f57a3cd6-c887-4871-be34-9beba1e2f48f/_apis/Release/approvals/12"
+                }
+            ],
+            "_links": {}
+        }
+    ]
+}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Remarkable TFS or AzureDevOps Release Notifier</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <style> ::-webkit-scrollbar { display: none; } </style>
+  </head>
+  <body>
+    <div id="main">
+    <div class="columns">
+      <div class="column">
+        <div class="control is-pulled-right" >
+          <a>
+            <img id="close" height="42" width="42" src="./images/img_close_window_52.png"></img>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+      <div class="tile is-ancestor">
+        <div class="hero-body">
+          <div class="tile is-vertical is-6">
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Username</label>
+                  <div class="control">
+                    <input class="input" id="username" type="text" placeholder="Azure Devops or TFS username" />
+                  </div>
+                  <p class="help is-success">Azure Devops or TFS username</p>
+                </div>
+                <div class="field">
+                  <label class="label">PAT</label>
+                  <div class="control">
+                    <input class="input" id="pat" type="text" placeholder="Personal Access Token" />
+                  </div>
+                  <p class="help is-success">Where do I find this?</p>
+                </div>
+                <div class="field">
+                  <label class="label">Poll Interval</label>
+                  <div class="control">
+                    <input class="input" id="pollInterval" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Failure Threshold</label>
+                  <div class="control">
+                    <input class="input" id="failureThreshold" type="text" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <br />
+          <div class="tile is-vertical is-6">
+            <div class="tabs">
+              <ul>
+                <li id="settings.tfs.tab" onclick="toggleTab('tfs')" class="is-active"><a>TFS</a></li>
+                <li id="settings.azure.tab" onclick="toggleTab('azure')"><a>AzureDevOps</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- TFS Settings -->
+          <div id="settings.tfs" class="tile is-vertical is-6">
+
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Instance</label>
+                  <div class="control">
+                    <input class="input" id="tfs.instance" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Collection</label>
+                  <div class="control">
+                    <input class="input" id="tfs.collection" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Project</label>
+                  <div class="control">
+                    <input class="input" id="tfs.project" type="text" />
+                  </div>
+                  <p class="help is-success">Where do I find this?</p>
+                </div>
+                <div class="field">
+                  <label class="label">Release Definition Id</label>
+                  <div class="control">
+                    <input class="input" id="tfs.releaseDefinitionId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Environment Id</label>
+                  <div class="control">
+                    <input class="input" id="tfs.environmentId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Api Version</label>
+                  <div class="control">
+                    <input class="input" id="tfs.apiVersion" type="text" placeholder="4.1-preview.2" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- AzureDevOps Settings -->
+          <div id="settings.azure" class="tile is-vertical is-6">
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <div class="field">
+                  <label class="label">Organization</label>
+                  <div class="control">
+                    <input class="input" id="azure.organization" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Project</label>
+                  <div class="control">
+                    <input class="input" id="azure.project" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Release Definition Id</label>
+                  <div class="control">
+                    <input class="input" id="azure.releaseDefinitionId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Environment Id</label>
+                  <div class="control">
+                    <input class="input" id="azure.environmentId" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Api Version</label>
+                  <div class="control">
+                    <input class="input" id="azure.apiVersion" type="text" placeholder="5.1" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            <article id="genericModal" class="message is-danger is-hidden-tablet is-hidden-desktop is-hidden-mobile">
+              <div class="message-header">
+                <button id="closeModal" onclick="closeModal()" class="delete" aria-label="delete"></button>
+              </div>
+              <div id="msg" class="message-body"></div>
+            </article>
+            <div class="control">
+              <button id="save" class="button is-link is-pulled-right">Save</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <script type='text/javascript'>
+      const lib = require('./lib')
+      const log = require('electron-log');
+      
+      document.addEventListener('DOMContentLoaded',pageLoaded);
+
+      function closeModal() {
+        document.getElementById('genericModal').className = 'message is-hidden-tablet is-danger is-hidden-desktop is-hidden-mobile'
+      }
+
+      function toggleTab(option) {
+        var inActiveOption = ''
+        if(option == 'azure') {
+          inActiveOption = 'tfs'
+        } else {
+          inActiveOption = 'azure'
+        }
+
+        document.getElementById(`settings.${option}.tab`).className = 'is-active'
+        document.getElementById(`settings.${option}`).className = 'tile is-vertical is-3'
+        document.getElementById(`settings.${inActiveOption}.tab`).className = ''
+        document.getElementById(`settings.${inActiveOption}`).className = 'tile is-vertical is-3 is-hidden-desktop is-hidden-mobile is-hidden-tablet'
+      }
+
+      function pageLoaded(){
+          console.log('The page is loaded')       
+          const appConfig = lib.getConfig()
+          document.getElementById('username').value = appConfig.username
+          document.getElementById('pat').value = appConfig.pat
+          document.getElementById('pollInterval').value = appConfig.pollInterval
+          document.getElementById('failureThreshold').value = appConfig.failureThreshold          
+
+          if(appConfig.tfsOrazure == "tfs") {
+            document.getElementById('tfs.instance').value = appConfig.tfs.instance 
+            document.getElementById('tfs.collection').value = appConfig.tfs.collection
+            document.getElementById('tfs.project').value = appConfig.tfs.project
+            document.getElementById('tfs.releaseDefinitionId').value = appConfig.tfs.releaseDefinitionId
+            document.getElementById('tfs.environmentId').value = appConfig.tfs.environmentId
+            document.getElementById('tfs.apiVersion').value = appConfig.tfs.apiVersion
+            toggleTab('tfs')
+          } else if(appConfig.tfsOrazure == "azure") {
+            document.getElementById('azure.organization').value = appConfig.azure.organization
+            document.getElementById('azure.project').value = appConfig.azure.project
+            document.getElementById('azure.releaseDefinitionId').value = appConfig.azure.releaseDefinitionId
+            document.getElementById('azure.environmentId').value = appConfig.azure.environmentId
+            document.getElementById('azure.apiVersion').value = appConfig.azure.apiVersion
+            toggleTab('azure')
+          } else {
+            log.error('Failed to load config - tfs or azure not defined')
+          }
+
+          document.getElementById('main').style.setProperty("border-radius", "5px")
+          document.getElementsByTagName('body')[0].style.setProperty("border-radius", "5px")
+      }
+
+      function getConfigFromUi(){
+        var tfsOrazure = ''
+        if(document.getElementById('settings.tfs.tab').className.includes('active')) {
+          tfsOrazure = 'tfs'
+        } else {
+          tfsOrazure = 'azure'
+        }
+
+        return {
+          username: document.getElementById('username').value,
+          pat: document.getElementById('pat').value,
+          pollInterval: document.getElementById('pollInterval').value,
+          failureThreshold: document.getElementById('failureThreshold').value,
+          tfsOrazure: tfsOrazure,
+          tfs: {
+            'instance': document.getElementById('tfs.instance').value,
+            'collection': document.getElementById('tfs.collection').value,
+            'project': document.getElementById('tfs.project').value,
+            'releaseDefinitionId': document.getElementById('tfs.releaseDefinitionId').value,
+            'environmentId': document.getElementById('tfs.environmentId').value,
+            'apiVersion' : document.getElementById('tfs.apiVersion').value
+          },
+          azure: {
+            'organization': document.getElementById('azure.organization').value,
+            'project': document.getElementById('azure.project').value,
+            'releaseDefinitionId': document.getElementById('azure.releaseDefinitionId').value,
+            'environmentId': document.getElementById('azure.environmentId').value,
+            'apiVersion' : document.getElementById('azure.apiVersion').value
+          }
+        }
+      }
+
+      function testConfiguration(){
+        const request = require('request')
+        const appConfig = getConfigFromUi()
+
+        return new Promise((resolve, reject) =>{
+          request({ url: lib.getUrl(appConfig), headers: { 'Authorization': lib.generateAuthToken(appConfig.username, appConfig.pat) } }, function (error, response, body) {
+            console.log('body = >', body)
+            if (error || response.statusCode != 200) {
+              reject({ 
+                hasErrors: true,
+                errors: `${response.statusCode} : ${response.statusMessage}`
+              })
+            } else if(body == null) {
+              reject({ 
+                hasErrors: true,
+                errors: 'Unable to retrieve release details'
+              })              
+            } else {
+              resolve({ hasErrors: false, body: body})
+            }          
+          })
+        })
+      }
+  
+      document.getElementById('close').onclick = function() {
+        const electron = require('electron')
+        electron.remote.getCurrentWindow().hide()
+      }
+
+      document.getElementById('save').onclick = function(){
+        log.info('Save clicked')        
+        const appConfig = getConfigFromUi()
+
+        var validationResult = lib.validateConfig(appConfig)
+
+        if(!validationResult.hasErrors) {
+          testConfiguration().then((result) =>{
+            lib.setConfig(appConfig)
+            document.getElementById('msg').innerText = 'Configuration Saved - restarting the app ...'
+            document.getElementById('genericModal').className = 'message is-success'
+            log.info('Config updated')
+            console.log('result => ', result)
+            const remote = require('electron').remote;
+            var showConfigIsValid = remote.require('./main').showConfigIsValid;
+            showConfigIsValid()     
+          }).catch(e => {
+            document.getElementById('msg').innerText = e.errors 
+            document.getElementById('genericModal').className = 'message is-danger'
+          })
+        } else {
+          document.getElementById('msg').innerText = validationResult.errors.join('\n');
+          document.getElementById('genericModal').className = 'message is-danger'
+        }       
+      }   
+    </script>  
+  </body>
+</html>

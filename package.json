@@ -1,0 +1,46 @@
+{
+  "name": "yuarpp",
+  "productName": "yuarpp",
+  "version": "1.0.0",
+  "description": "Polls tfs for recently completed releases",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "windows-installer": "node ./generate-installer.js",
+    "make-windows": "./node_modules/.bin/electron-packager . yuarpp --overwrite  --platform=win32 --arch=x64  --prune=true --out=release-builds --version-string.CompanyName=RR --version-string.FileDescription=RR --version-string.ProductName=yuarpp --electron-version 8.2.1",
+    "make-nix": "./node_modules/.bin/electron-packager . yuarpp --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=release-builds-nix",
+    "lint": "echo \"No linting configured\"",
+    "test": "jasmine tests/*spec.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "ry",
+    "email": "ryanrosello@hotmail.com"
+  },
+  "license": "MIT",
+  "build": {
+    "directories": {
+      "buildResources": "resources"
+    },
+    "extraFiles": [
+      "resources"
+    ]
+  },
+  "dependencies": {
+    "electron-first-run": "^3.0.0",
+    "electron-log": "^4.1.1",
+    "electron-packager": "^14.2.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^5.1.1",
+    "moment": "^2.24.0",
+    "node-notifier": "^7.0.0",
+    "open": "^7.0.3",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.2.0",
+    "electron": "^8.2.1",
+    "electron-winstaller": "^4.0.0",
+    "jasmine": "^3.5.0"
+  }
+}
