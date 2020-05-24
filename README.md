@@ -12,6 +12,7 @@ Run the installer file `yuarppSetup.exe`
 ## Configuration
 
 Reposition the application onto the visible area of the windows systems tray
+
 ![Alt Text](./docs/2020-05-17_13-18-21.gif)
 
 Right click the application and invoke > Configure
